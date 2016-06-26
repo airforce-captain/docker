@@ -1,0 +1,2 @@
+#!/bin/bash
+exec gitlab-ci-multi-runner "$@"

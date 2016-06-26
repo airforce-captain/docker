@@ -23,6 +23,9 @@ RUN wget -q -O /usr/bin/gitlab-ci-multi-runner https://gitlab-ci-multi-runner-do
 	mkdir -p /etc/gitlab-runner/certs && \
 	chmod -R 700 /etc/gitlab-runner
 
+ADD entrypoint /
+RUN chmod +x /entrypoint
+
 VOLUME ["/etc/gitlab-runner"]
-ENTRYPOINT ["gitlab-ci-multi-runner"]
+ENTRYPOINT ["/entrypoint"]
 CMD ["run"]

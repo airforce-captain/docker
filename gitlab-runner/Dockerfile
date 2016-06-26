@@ -18,14 +18,11 @@ RUN apk --no-cache update && apk add --update \
 RUN wget -q -O /usr/bin/gitlab-ci-multi-runner https://gitlab-ci-multi-runner-downloads.s3.amazonaws.com/latest/binaries/gitlab-ci-multi-runner-linux-amd64 && \
 	chmod +x /usr/bin/gitlab-ci-multi-runner && \
 	ln -s /usr/bin/gitlab-ci-multi-runner /usr/bin/gitlab-runner && \
-	wget -q https://github.com/docker/machine/releases/download/v0.7.0/docker-machine-Linux-x86_64 -O /usr/bin/docker-machine && \
-	chmod +x /usr/bin/docker-machine && \
+	wget -q -O /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v1.1.1/dumb-init_1.1.1_amd64 && \
+	chmod +x /usr/local/bin/dumb-init && \
 	mkdir -p /etc/gitlab-runner/certs && \
 	chmod -R 700 /etc/gitlab-runner
 
-ADD entrypoint /
-RUN chmod +x /entrypoint
-
 VOLUME ["/etc/gitlab-runner"]
-ENTRYPOINT ["/entrypoint"]
-CMD ["run"]
+ENTRYPOINT ["/usr/local/bin/dumb-init"]
+CMD ["gitlab-ci-multi-runner", "run"]

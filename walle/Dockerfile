@@ -36,6 +36,6 @@ RUN   git clone https://github.com/meolu/walle-web /opt/walle-web \
       && mkdir -p /var/lib/mysql/walle \
       && chown -R mysql:mysql /var/lib/mysql/walle 
       
-EXPOSE 22 80 9000
+EXPOSE 80 9000
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["php-fpm"]

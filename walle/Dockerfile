@@ -38,4 +38,4 @@ RUN   git clone https://github.com/meolu/walle-web /opt/walle-web \
 
 EXPOSE 22 80 9000
 ENTRYPOINT ["/entrypoint.sh"]
-CMD ["mysqld_safe&","nginx", "php-fpm"]
+CMD ["mysqld_safe --user=mysql&","nginx", "php-fpm"]

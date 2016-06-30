@@ -32,10 +32,10 @@ RUN   git clone https://github.com/meolu/walle-web /opt/walle-web \
       &&composer install --prefer-dist --no-dev --optimize-autoloader -vvvv \
       && chmod +x /entrypoint.sh \
       && chown -R www-data:www-data /opt/walle-web \
+      && mysql_install_db --user=mysql \
       && mkdir -p /var/lib/mysql/walle \
-      && chown -R mysql:mysql /var/lib/mysql/walle
-
-
+      && chown -R mysql:mysql /var/lib/mysql/walle 
+      
 EXPOSE 22 80 9000
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["php-fpm"]

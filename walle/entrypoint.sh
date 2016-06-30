@@ -4,8 +4,12 @@ set -e
 #start db
 mysqld_safe --user=mysql &
 
-#start php-fpm
-#/usr/local/sbin/php-fpm&
+#if no index
+if [ ! -e /var/www/html/index.php ];then
+  echo '<? php' >/var/www/html/index.php
+  echo 'phpinfo();' >>/var/www/html/index.php
+  echo '?>' >>/var/www/html/index.php
+fi
 
 #start nginx
 /usr/sbin/nginx

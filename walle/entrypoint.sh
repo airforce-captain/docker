@@ -11,6 +11,6 @@ mysqld_safe --user=mysql &
 /usr/sbin/nginx
 
 #init walle
-#/opt/walle-web/yii walle/setup --interactive=0
+/opt/walle-web/yii walle/setup --interactive=0
 
 exec $@

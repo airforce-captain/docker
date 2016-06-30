@@ -28,7 +28,8 @@ WORKDIR /opt/walle-web
 RUN   curl -sS https://getcomposer.org/installer | php \
       && mv composer.phar /usr/local/bin/composer \
       && chmod +x /usr/local/bin/composer 
-RUN   composer install --prefer-dist --no-dev --optimize-autoloader -vvvv \
+RUN   git clone https://github.com/meolu/walle-web /opt/walle-web \
+      &&composer install --prefer-dist --no-dev --optimize-autoloader -vvvv \
       && chmod +x /entrypoint.sh \
       && chown -R www-data:www-data /opt/walle-web \
       && mkdir -p /var/lib/mysql/walle \

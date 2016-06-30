@@ -30,7 +30,9 @@ RUN   curl -sS https://getcomposer.org/installer | php \
       && chmod +x /usr/local/bin/composer 
 RUN   composer install --prefer-dist --no-dev --optimize-autoloader -vvvv \
       && chmod +x /entrypoint.sh \
-      && chown -R www-data:www-data /opt/walle-web
+      && chown -R www-data:www-data /opt/walle-web \
+      && mkdir -p /var/lib/mysql/walle \
+      && chown -R mysql:mysql /var/lib/mysql/walle
 
 
 EXPOSE 22 80 9000

@@ -10,10 +10,11 @@ fi
 #start db
 if [ ! -d "$DATADIR/mysql" ]; then
 	mysql_install_db --user=mysql --datadir=$DATADIR
-	sleep 5
 	mysqld_safe --user=mysql --datadir=$DATADIR&
+	sleep 5
 else
 	mysqld_safe --user=mysql --datadir=$DATADIR&
+	sleep 5
 fi
 
 #if no index

@@ -2,7 +2,7 @@
 set -e
 
 #start db
-mysqld_safe --user=mysql &
+mysqld_safe --user=mysql --datadir=/opt/mysql&
 
 sleep 5
 

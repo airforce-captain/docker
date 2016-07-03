@@ -35,10 +35,9 @@ RUN   git clone https://github.com/meolu/walle-web /opt/walle-web \
       && chown -R mysql:mysql /opt/mysql/walle \
       && mysql_install_db --user=mysql --datadir=/opt/mysql 
 
-      
-RUN  apk del gcc libgcc libstdc++ libldap pkgconf pkgconfig binutils m4 perl g++ make
+ENV SERVER_NAME="walle.company.com"  DATADIR="/opt/mysql"
 
-EXPOSE 80
+EXPOSE 80 3306
 
 VOLUME ["/opt/walle-web", "/opt/mysql"]
 

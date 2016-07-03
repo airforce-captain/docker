@@ -36,28 +36,7 @@ RUN   git clone https://github.com/meolu/walle-web /opt/walle-web \
       && mysql_install_db --user=mysql --datadir=/opt/mysql 
 
       
-RUN  apk del \
-	autoconf \
-	m4 \
-	perl \
-	file \
-	g++ \
-	gcc \
-	binutils \
-	isl \
-	libatomic \
-	pkgconfig \
-	libc-dev \
-	musl-dev \
-	make \
-	pkgconf \
-	re2c \
-	libmagic \
-	binutils-libs \
-	mpc1 \
-	mpfr3 \
-	gpm \
-	libgomp
+RUN  apk del gcc libgcc libstdc++ libldap pkgconf pkgconfig binutils m4 perl g++ make
 
 EXPOSE 80
 

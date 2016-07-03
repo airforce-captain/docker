@@ -4,6 +4,8 @@ set -e
 #start db
 mysqld_safe --user=mysql &
 
+sleep 5
+
 #if no index
 if [ ! -e /var/www/html/index.php ];then
   echo '<?php' >/var/www/html/index.php

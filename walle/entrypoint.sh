@@ -1,18 +1,18 @@
 #!/usr/bin/env sh
 set -e
 
-#init db
-if [ ! -d $DATADIR ]; then
-	mkdir -p $DATADIR
-	chown -R mysql:mysql $DATADIR
-fi
-
 #start db
 if [ ! -d "$DATADIR/mysql" ]; then
+	mkdir -p $DATADIR
+	chown -R mysql:mysql $DATADIR
+	mkdir -p $DATADIR/walle
+	chown -R mysql $DATADIR/walle
 	mysql_install_db --user=mysql --datadir=$DATADIR
 	mysqld_safe --user=mysql --datadir=$DATADIR&
 	sleep 5
 else
+	mkdir -p $DATADIR/walle
+	chown -R mysql $DATADIR/walle
 	mysqld_safe --user=mysql --datadir=$DATADIR&
 	sleep 5
 fi

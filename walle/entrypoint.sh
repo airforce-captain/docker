@@ -1,10 +1,18 @@
 #!/usr/bin/env sh
 set -e
 
-#start db
-mysqld_safe --user=mysql --datadir=/opt/mysql&
+#init db
+if [ ! -d $DATADIR ]; then
+	mkdir -p $DATADIR
+	chown -R mysql:mysql $DATADIR
+fi
 
-sleep 5
+#start db
+if [ ! -d "$DATADIR/mysql" ]; then
+	mysql_install_db --user=mysql --datadir=$DATADIR&&mysqld_safe --user=mysql --datadir=$DATADIR&
+else
+	mysqld_safe --user=mysql --datadir=$DATADIR&
+fi
 
 #if no index
 if [ ! -e /var/www/html/index.php ];then

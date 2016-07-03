@@ -32,8 +32,7 @@ RUN   git clone https://github.com/meolu/walle-web /opt/walle-web \
       && chmod +x /entrypoint.sh \
       && chown -R www-data:nginx /opt/walle-web \
       && mkdir -p /opt/mysql/walle \
-      && chown -R mysql:mysql /opt/mysql/walle \
-      && mysql_install_db --user=mysql --datadir=/opt/mysql 
+      && chown -R mysql:mysql /opt/mysql/walle 
 
 ENV SERVER_NAME="walle.company.com"  DATADIR="/opt/mysql"
 

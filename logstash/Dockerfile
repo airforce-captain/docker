@@ -34,7 +34,7 @@ RUN set -x \
 	&& apt-get update \
 	&& apt-get install -y --no-install-recommends logstash=$LOGSTASH_VERSION \
 	&& rm -rf /var/lib/apt/lists/* \
-	&& wget -O /etc/logstash/GeoLiteCity.dat.xz http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz \
+	&& wget -O /etc/logstash/GeoLiteCity.dat.gz http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz \
         && gunzip -d /etc/logstash/GeoLiteCity.dat.gz \
 	&& mkdir /etc/logstash/conf.d \
 	&& mkdir /etc/logstash/patterns.d

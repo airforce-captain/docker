@@ -36,7 +36,6 @@ RUN set -x \
 	&& rm -rf /var/lib/apt/lists/* \
 	&& wget -O /etc/logstash/GeoLiteCity.dat.gz http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz \
         && gunzip -d /etc/logstash/GeoLiteCity.dat.gz \
-	&& mkdir /etc/logstash/conf.d \
 	&& mkdir /etc/logstash/patterns.d
 
 #add configfile

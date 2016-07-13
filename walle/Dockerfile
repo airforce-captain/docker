@@ -14,7 +14,8 @@ RUN mkdir -p /opt/walle-web && apk add --update \
             zlib-dev \
             unzip \
             subversion \
-            ansible 
+            ansible \
+            openssh-client
 
 RUN docker-php-ext-install bcmath intl mbstring mcrypt mysqli opcache pdo_mysql
 

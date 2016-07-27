@@ -6,7 +6,7 @@ NGINX 1.10.1
 MariaDB 10.1.14
 
 系统组件:
-git nginx mysql gettext libmcrypt-dev icu-libs zlib-dev unzip subversion ansible
+git nginx mysql gettext libmcrypt-dev icu-libs zlib-dev unzip subversion ansible openssh-client
 
 php组件:
 bcmath intl mbstring mcrypt mysqli opcache pdo_mysql

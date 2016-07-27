@@ -1,1 +1,1 @@
-自定义logstash配置的docker image, 增加了配置nginx与postfix的自定义日志格式匹配.
+自定义logstash配置的docker image, 增加了配置nginx与postfix的自定义日志格式匹配..

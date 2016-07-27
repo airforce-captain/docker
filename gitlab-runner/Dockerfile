@@ -13,7 +13,8 @@ RUN apk --no-cache update && apk add --update \
     		python \
     		bzip2 \
     		xz \
-    		rsync
+    		rsync \
+		openssh-client
 
 RUN wget -q -O /usr/bin/gitlab-ci-multi-runner https://gitlab-ci-multi-runner-downloads.s3.amazonaws.com/latest/binaries/gitlab-ci-multi-runner-linux-amd64 && \
 	chmod +x /usr/bin/gitlab-ci-multi-runner && \

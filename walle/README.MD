@@ -1,4 +1,4 @@
-集成打包lnmp环境的walle-web部署工具,适合懒人们使用. 根据php docker官方Dockerfile配置修改.
+集成打包lnmp环境的walle-web部署工具,适合懒人们使用. 根据php docker官方Dockerfile配置修改,有问题可以反馈给我.
 
 环境配置是:
 PHP 5.6.23

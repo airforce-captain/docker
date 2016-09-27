@@ -218,6 +218,7 @@ RUN set -xe \
     	&& make install \
 	&& cp php.ini-production $PHP_INI_DIR/php.ini \
 	&& wget http://pecl.php.net/get/$REDIS_FILENAME -O /usr/src/php/ext/redis.tgz \
+	&& tar xf /usr/src/php/ext/redis.tgz -C /usr/src/php/ext \
 	&& mv /usr/src/php/ext/redis-${REDIS_VERSION} /usr/src/php/ext/redis \
     	&& { find /usr/local/bin /usr/local/sbin -type f -perm +0111 -exec strip --strip-all '{}' + || true; } \
     	&& make clean \

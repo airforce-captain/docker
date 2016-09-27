@@ -198,6 +198,9 @@ RUN set -xe \
     	\
     	&& docker-php-source extract \
     	&& cd /usr/src/php \
+	&& wget http://pecl.php.net/get/$REDIS_FILENAME -O /usr/src/php/ext/redis.tgz \
+	&& tar xf /usr/src/php/ext/redis.tgz -C /usr/src/php/ext \
+	&& mv /usr/src/php/ext/redis-${REDIS_VERSION} /usr/src/php/ext/redis \
     	&& ./configure \
     		--with-config-file-path="$PHP_INI_DIR" \
     		--with-config-file-scan-dir="$PHP_INI_DIR/conf.d" \
@@ -207,19 +210,34 @@ RUN set -xe \
     		--enable-ftp \
     		--enable-mbstring \
     		--enable-mysqlnd \
+		--enable-sockets \
+		--enable-sysvsem \
+		--enable-sysvshm \
+		--enable-opcache \
+		--enable-exif \
+		--enable-zip \
     		\
     		--with-curl \
     		--with-libedit \
     		--with-openssl \
     		--with-zlib \
+		--with-milter \
+		--with-gettext \
+		--with-readline \
+		--with-gd \
+		--with-imap \
     		\
     		$PHP_EXTRA_CONFIGURE_ARGS \
     	&& make -j"$(getconf _NPROCESSORS_ONLN)" \
     	&& make install \
 	&& cp php.ini-production $PHP_INI_DIR/php.ini \
-	&& wget http://pecl.php.net/get/$REDIS_FILENAME -O /usr/src/php/ext/redis.tgz \
-	&& tar xf /usr/src/php/ext/redis.tgz -C /usr/src/php/ext \
-	&& mv /usr/src/php/ext/redis-${REDIS_VERSION} /usr/src/php/ext/redis \
+	&& cd /usr/src/php/ext/redis \
+	&& phpize \
+	&& ./configure --with-php-config=/usr/local/bin/php-config \
+	&& make \
+	&& make install \
+	&& echo 'extension="redis.so"' >> $PHP_INI_DIR/php.ini \
+	&& cd /usr/src/php \
     	&& { find /usr/local/bin /usr/local/sbin -type f -perm +0111 -exec strip --strip-all '{}' + || true; } \
     	&& make clean \
     	&& docker-php-source delete \
@@ -239,7 +257,7 @@ RUN set -xe \
 
     COPY docker-php-ext-* /usr/local/bin/
 
-    RUN docker-php-ext-install bcmath intl mbstring mcrypt mysqli opcache pdo_mysql gettext sysvsem sysvshm sockets zip imap exif redis
+    RUN docker-php-ext-install bcmath intl mbstring mcrypt mysqli opcache pdo_mysql gettext sysvsem sysvshm sockets zip imap exif
 
     WORKDIR /usr/share/nginx/html
 

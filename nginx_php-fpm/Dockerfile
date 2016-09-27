@@ -1,6 +1,6 @@
 FROM alpine:3.4
 
-MAINTAINER NGINX Docker Maintainers "docker-maint@nginx.com"
+MAINTAINER YoungMan "bushengquan@eastspider.com"
 
 ENV NGINX_VERSION 1.10.1
 
@@ -97,6 +97,9 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 	&& rm -rf /etc/nginx/html/ \
 	&& mkdir /etc/nginx/conf.d/ \
 	&& mkdir -p /usr/share/nginx/html/ \
+	&& echo '<?php ' >> /usr/share/nginx/html/index.php \
+	&& echo 'phpinfo()' >> /usr/share/nginx/html/index.php \
+	&& echo '?>' >> /usr/share/nginx/html/index.php \
 	&& install -m644 html/index.html /usr/share/nginx/html/ \
 	&& install -m644 html/50x.html /usr/share/nginx/html/ \
 	&& install -m755 objs/nginx-debug /usr/sbin/nginx-debug \
@@ -124,8 +127,6 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 			| sort -u \
 	)" \
 	&& apk add --no-cache --virtual .nginx-rundeps $runDeps \
-	&& apk del .build-deps \
-	&& apk del .gettext \
 	&& mv /tmp/envsubst /usr/local/bin/ \
 	\
 	# forward request and error logs to docker log collector
@@ -152,7 +153,7 @@ RUN apk add --no-cache --virtual .persistent-deps \
 		tar \
 		xz
 
-ENV PHP_INI_DIR /usr/local/etc/php
+ENV PHP_INI_DIR /etc/php
 RUN mkdir -p $PHP_INI_DIR/conf.d
 
 ENV PHP_EXTRA_CONFIGURE_ARGS --enable-fpm --with-fpm-user=nginx --with-fpm-group=nginx
@@ -162,6 +163,9 @@ ENV GPG_KEYS 0BD78B5F97500D450838F95DFE857D9A90D90EC1 6E4F6AB321FDC07F2C332E3AC2
 ENV PHP_VERSION 5.6.26
 ENV PHP_FILENAME php-5.6.26.tar.xz
 ENV PHP_SHA256 203a854f0f243cb2810d1c832bc871ff133eccdf1ff69d32846f93bc1bef58a8
+
+ENV REDIS_VERSION 2.2.8
+ENV REDIS_FILENAME redis-2.2.8.tgz
 
 RUN set -xe \
 	&& apk add --no-cache --virtual .fetch-deps \
@@ -212,6 +216,9 @@ RUN set -xe \
     		$PHP_EXTRA_CONFIGURE_ARGS \
     	&& make -j"$(getconf _NPROCESSORS_ONLN)" \
     	&& make install \
+	&& cp php.ini-production $PHP_INI_DIR/php.ini \
+	&& wget http://pecl.php.net/get/$REDIS_FILENAME -O ext/redis.tgz \
+	&& mv ext/redis-${REDIS_VERSION} ext/redis \
     	&& { find /usr/local/bin /usr/local/sbin -type f -perm +0111 -exec strip --strip-all '{}' + || true; } \
     	&& make clean \
     	&& docker-php-source delete \
@@ -226,16 +233,17 @@ RUN set -xe \
     	&& apk add --no-cache --virtual .php-rundeps $runDeps \
     	\
 	&& apk del .fetch-deps \
-    	&& apk del .build-deps
+	&& apk del .build-deps \
+	&& apk del .gettext 
 
     COPY docker-php-ext-* /usr/local/bin/
 
-    RUN docker-php-ext-install bcmath intl mbstring mcrypt mysqli opcache pdo_mysql 
+    RUN docker-php-ext-install bcmath intl mbstring mcrypt mysqli opcache pdo_mysql gettext sysvsem sysvshm sockets zip imap exif redis
 
-    WORKDIR /var/www/html
+    WORKDIR /usr/share/nginx/html
 
     RUN set -ex \
-    	&& cd /usr/local/etc \
+    	&& cd /etc \
     	&& if [ -d php-fpm.d ]; then \
     		# for some reason, upstream's php-fpm.conf.default has "include=NONE/etc/php-fpm.d/*.conf"
     		sed 's!=NONE/!=!g' php-fpm.conf.default | tee php-fpm.conf > /dev/null; \
@@ -267,14 +275,18 @@ RUN set -xe \
     		echo; \
     		echo '[www]'; \
     		echo 'listen = [::]:9000'; \
-            echo 'user = nginx'; \
-            echo 'group = nginx'; \
-            echo 'listen.owner = nginx'; \
-            echo 'listen.group = nginx'; \
-            echo 'listen.mode = 0660'; \
-    	} | tee php-fpm.d/zz-docker.conf
+    		echo 'listen = /var/run/php-fpm.sock'; \
+    		echo 'rlimit_files = 65536'; \
+		echo 'pm = dynamic'; \
+		echo 'pm.max_children = 150'; \
+		echo 'pm.start_servers = 10'; \
+		echo 'pm.min_spare_servers = 10'; \
+		echo 'pm.max_spare_servers = 100'; \ 
+		echo 'request_terminate_timeout = 10m'; \
+    	} | tee php-fpm.d/socket.conf \
+	&& rm -f /usr/src/php.tar*
 
 
 EXPOSE 80 443 9000
 
-CMD ["nginx", "-g", "daemon off;","php-fpm"]
+CMD ["nginx","php-fpm"]

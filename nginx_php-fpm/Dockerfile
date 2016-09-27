@@ -217,8 +217,8 @@ RUN set -xe \
     	&& make -j"$(getconf _NPROCESSORS_ONLN)" \
     	&& make install \
 	&& cp php.ini-production $PHP_INI_DIR/php.ini \
-	&& wget http://pecl.php.net/get/$REDIS_FILENAME -O ext/redis.tgz \
-	&& mv ext/redis-${REDIS_VERSION} ext/redis \
+	&& wget http://pecl.php.net/get/$REDIS_FILENAME -O /usr/src/php/ext/redis.tgz \
+	&& mv /usr/src/php/ext/redis-${REDIS_VERSION} /usr/src/php/ext/redis \
     	&& { find /usr/local/bin /usr/local/sbin -type f -perm +0111 -exec strip --strip-all '{}' + || true; } \
     	&& make clean \
     	&& docker-php-source delete \

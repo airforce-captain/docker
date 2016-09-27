@@ -75,13 +75,10 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
         file \
         g++ \
         pkgconf \
-        re2c
-        
+        re2c \        
 	&& curl -fSL http://nginx.org/download/nginx-$NGINX_VERSION.tar.gz -o nginx.tar.gz \
 	&& curl -fSL http://nginx.org/download/nginx-$NGINX_VERSION.tar.gz.asc  -o nginx.tar.gz.asc \
 	&& export GNUPGHOME="$(mktemp -d)" \
-	&& gpg --keyserver ha.pool.sks-keyservers.net --recv-keys "$GPG_KEYS" \
-	&& gpg --batch --verify nginx.tar.gz.asc nginx.tar.gz \
 	&& rm -r "$GNUPGHOME" nginx.tar.gz.asc \
 	&& mkdir -p /usr/src \
 	&& tar -zxC /usr/src -f nginx.tar.gz \
@@ -141,14 +138,19 @@ COPY nginx.vh.default.conf /etc/nginx/conf.d/default.conf
 COPY docker-php-source /usr/local/bin/
 
 ENV PHPIZE_DEPS \
-    		autoconf \
-    		file \
-    		g++ \
-    		gcc \
-    		libc-dev \
-    		make \
-    		pkgconf \
-    		re2c
+		autoconf \
+		file \
+		g++ \
+		gcc \
+		libc-dev \
+		make \
+		pkgconf \
+		re2c
+RUN apk add --no-cache --virtual .persistent-deps \
+		ca-certificates \
+		curl \
+		tar \
+		xz
 
 ENV PHP_INI_DIR /usr/local/etc/php
 RUN mkdir -p $PHP_INI_DIR/conf.d
@@ -164,6 +166,7 @@ ENV PHP_SHA256 203a854f0f243cb2810d1c832bc871ff133eccdf1ff69d32846f93bc1bef58a8
 RUN set -xe \
 	&& apk add --no-cache --virtual .fetch-deps \
 		gnupg \
+		curl \
 	&& mkdir -p /usr/src \
 	&& cd /usr/src \
 	&& curl -fSL "https://secure.php.net/get/$PHP_FILENAME/from/this/mirror" -o php.tar.xz \
@@ -174,8 +177,7 @@ RUN set -xe \
 		gpg --keyserver ha.pool.sks-keyservers.net --recv-keys "$key"; \
 	done \
 	&& gpg --batch --verify php.tar.xz.asc php.tar.xz \
-	&& rm -r "$GNUPGHOME" \
-	&& apk del .fetch-deps
+	&& rm -r "$GNUPGHOME" 
 
     RUN set -xe \
     	&& apk add --no-cache --virtual .build-deps \
@@ -183,6 +185,7 @@ RUN set -xe \
     		curl-dev \
     		libedit-dev \
     		libxml2-dev \
+		openssl-dev \
     		sqlite-dev \
             gettext \
             libmcrypt-dev \
@@ -197,11 +200,8 @@ RUN set -xe \
     		\
     		--disable-cgi \
     		\
-    # --enable-ftp is included here because ftp_ssl_connect() needs ftp to be compiled statically (see https://github.com/docker-library/php/issues/236)
     		--enable-ftp \
-    # --enable-mbstring is included here because otherwise there's no way to get pecl to use it properly (see https://github.com/docker-library/php/issues/195)
     		--enable-mbstring \
-    # --enable-mysqlnd is included here because it's harder to compile after the fact than extensions are (since it's a plugin for several extensions, not an extension in itself)
     		--enable-mysqlnd \
     		\
     		--with-curl \
@@ -225,6 +225,7 @@ RUN set -xe \
     	)" \
     	&& apk add --no-cache --virtual .php-rundeps $runDeps \
     	\
+	&& apk del .fetch-deps \
     	&& apk del .build-deps
 
     COPY docker-php-ext-* /usr/local/bin/

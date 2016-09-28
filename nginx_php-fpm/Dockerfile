@@ -235,7 +235,6 @@ RUN set -xe \
     		--with-openssl \
     		--with-zlib \
 		--with-mcrypt \
-		--with-milter \
 		--with-gettext \
 		--with-readline \
 		--with-gd \

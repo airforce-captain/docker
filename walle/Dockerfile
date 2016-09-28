@@ -4,14 +4,16 @@ MAINTAINER YougnMan <bushengquan@eastspider.com>
 
 LABEL description="walle 包含LNMP集成版测试"
 
-RUN mkdir -p /opt/walle-web && apk add --update \
-            git \
-            nginx \
-            mysql \
+RUN mkdir -p /opt/walle-web && apk add --no-cache --virtual .build-deps \
             gettext \
             libmcrypt-dev \
             icu-libs \
-            zlib-dev \
+            zlib-dev 
+
+RUN mkdir -p /opt/walle-web && apk add --no-cache --virtual .persistent-deps \
+            git \
+            nginx \
+            mysql \
             unzip \
             subversion \
             ansible \
@@ -33,7 +35,8 @@ RUN   git clone https://github.com/meolu/walle-web /opt/walle-web \
       && chmod +x /entrypoint.sh \
       && chown -R www-data:nginx /opt/walle-web \
       && mkdir -p /opt/mysql/walle \
-      && chown -R mysql:mysql /opt/mysql/walle 
+      && chown -R mysql:mysql /opt/mysql/walle \
+      && apk del .build-deps
 
 ENV SERVER_NAME="walle.company.com"  DATADIR="/opt/mysql"
 

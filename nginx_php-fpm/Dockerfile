@@ -138,6 +138,8 @@ COPY nginx.vh.default.conf /etc/nginx/conf.d/default.conf
 
 COPY docker-php-source /usr/local/bin/
 
+ADD ./entrypoint.sh /entrypoint.sh
+
 ENV PHPIZE_DEPS \
 		autoconf \
 		file \
@@ -279,7 +281,7 @@ RUN set -xe \
 
     COPY docker-php-ext-* /usr/local/bin/
 
-    RUN docker-php-ext-install bcmath intl mbstring mcrypt mysqli opcache pdo_mysql gettext sysvsem sysvshm sockets zip imap exif
+    RUN docker-php-ext-install bcmath intl mbstring mcrypt mysqli opcache pdo_mysql
 
     WORKDIR /usr/share/nginx/html
 
@@ -294,40 +296,40 @@ RUN set -xe \
     		cp php-fpm.conf.default php-fpm.d/www.conf; \
     		{ \
     			echo '[global]'; \
-    			echo 'include=etc/php-fpm.d/*.conf'; \
+    			echo 'include=/etc/php-fpm.d/*.conf'; \
     		} | tee php-fpm.conf; \
     	fi \
     	&& { \
-    		echo '[global]'; \
-    		echo 'error_log = /proc/self/fd/2'; \
-    		echo; \
-    		echo '[www]'; \
-    		echo '; if we send this to /proc/self/fd/1, it never appears'; \
-    		echo 'access.log = /proc/self/fd/2'; \
-    		echo; \
-    		echo 'clear_env = no'; \
-    		echo; \
-    		echo '; Ensure worker stdout and stderr are sent to the main error log.'; \
-    		echo 'catch_workers_output = yes'; \
-    	} | tee php-fpm.d/docker.conf \
-    	&& { \
-    		echo '[global]'; \
-    		echo 'daemonize = no'; \
-    		echo; \
-    		echo '[www]'; \
-    		echo 'listen = [::]:9000'; \
-    		echo 'listen = /var/run/php-fpm.sock'; \
-    		echo 'rlimit_files = 65536'; \
-		echo 'pm = dynamic'; \
-		echo 'pm.max_children = 150'; \
-		echo 'pm.start_servers = 10'; \
-		echo 'pm.min_spare_servers = 10'; \
-		echo 'pm.max_spare_servers = 100'; \ 
-		echo 'request_terminate_timeout = 10m'; \
+            echo '[global]'; \
+            echo 'error_log = /proc/self/fd/2'; \
+            echo 'daemonize = no'; \
+            echo; \
+            echo '[www]'; \
+            echo 'access.log = /proc/self/fd/2'; \
+            echo 'clear_env = no'; \
+            echo 'catch_workers_output = yes'; \
+            echo 'user = nginx'; \
+            echo 'group = nginx'; \
+            echo 'listen.backlog = 4096'; \
+            echo 'listen.owner = nginx'; \
+            echo 'listen.group = nginx'; \
+            echo 'listen.mode = 0660'; \
+            echo 'listen = [::]:9000'; \
+            echo ';listen = /var/run/php-fpm.sock'; \
+            echo 'rlimit_files = 65536'; \
+            echo 'pm = dynamic'; \
+            echo 'pm.max_children = 150'; \
+            echo 'pm.start_servers = 10'; \
+            echo 'pm.min_spare_servers = 10'; \
+            echo 'pm.max_spare_servers = 100'; \
+            echo 'request_terminate_timeout = 10m'; \
     	} | tee php-fpm.d/socket.conf \
-	&& rm -f /usr/src/php.tar*
+	&& rm -f /usr/src/php.tar* \
+	&& ln -s /etc/php-fpm.conf /usr/local/etc/php-fpm.conf
 
 
 EXPOSE 80 443 9000
 
-CMD ["nginx","php-fpm"]
+ENTRYPOINT ["/entrypoint.sh"]
+
+CMD ["php-fpm"]

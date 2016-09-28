@@ -191,11 +191,20 @@ RUN set -xe \
     		libxml2-dev \
 		openssl-dev \
     		sqlite-dev \
-            gettext \
-            libmcrypt-dev \
-            icu-libs \
-            zlib-dev \
-    	\
+            	gettext \
+            	libmcrypt-dev \
+            	icu-libs \
+            	zlib-dev \
+    		libpng-dev \
+		intltool \
+		gettext-dev \
+		icu \
+		icu-dev \
+		libvpx-dev \
+		libjpeg-turbo-dev \
+		freetype-dev \
+		imap-dev \
+		bzip2-dev \
     	&& docker-php-source extract \
     	&& cd /usr/src/php \
 	&& wget http://pecl.php.net/get/$REDIS_FILENAME -O /usr/src/php/ext/redis.tgz \
@@ -206,6 +215,7 @@ RUN set -xe \
     		--with-config-file-scan-dir="$PHP_INI_DIR/conf.d" \
     		\
     		--disable-cgi \
+		--disable-ipv6 \
     		\
     		--enable-ftp \
     		--enable-mbstring \
@@ -216,16 +226,29 @@ RUN set -xe \
 		--enable-opcache \
 		--enable-exif \
 		--enable-zip \
+		--enable-intl \
+		--enable-mbregex \
     		\
+		--with-pcre-regex \
     		--with-curl \
     		--with-libedit \
     		--with-openssl \
     		--with-zlib \
+		--with-mcrypt \
 		--with-milter \
 		--with-gettext \
 		--with-readline \
 		--with-gd \
+		--with-mhash \
+		--with-iconv-dir \
+		--with-pcre-dir \
+		--with-jpeg-dir \
+		--with-png-dir \
+		--with-vpx-dir \
+		--with-freetype-dir \
 		--with-imap \
+		--with-litespeed \
+		--with-bz2 \
     		\
     		$PHP_EXTRA_CONFIGURE_ARGS \
     	&& make -j"$(getconf _NPROCESSORS_ONLN)" \

@@ -12,7 +12,8 @@ ENV PHPIZE_DEPS \
 		libc-dev \
 		make \
 		pkgconf \
-		re2c  \
+		re2c  
+RUN set -xe \
 	&&apk add --no-cache --virtual .persistent-deps \
 		ca-certificates \
 		curl \
@@ -40,10 +41,11 @@ ENV PHP_SHA256 203a854f0f243cb2810d1c832bc871ff133eccdf1ff69d32846f93bc1bef58a8
 ENV REDIS_VERSION 2.2.8
 ENV REDIS_FILENAME redis-2.2.8.tgz
 
+COPY docker-php-source /usr/local/bin/
+
 RUN set -xe \
 	&& apk add --no-cache --virtual .fetch-deps \
 		gnupg \
-		curl \
 	&& mkdir -p /usr/src \
 	&& cd /usr/src \
 	&& curl -fSL "https://secure.php.net/get/$PHP_FILENAME/from/this/mirror" -o php.tar.xz \
@@ -56,7 +58,7 @@ RUN set -xe \
 	&& gpg --batch --verify php.tar.xz.asc php.tar.xz \
 	&& rm -r "$GNUPGHOME" 
 
-    RUN set -xe \
+RUN set -xe \
     	&& apk add --no-cache --virtual .build-deps \
     		$PHPIZE_DEPS \
     		curl-dev \
@@ -146,12 +148,52 @@ RUN set -xe \
     	)" \
     	&& apk add --no-cache --virtual .php-rundeps $runDeps 
     	
+RUN set -ex \
+    && cd /etc \
+    && if [ -d php-fpm.d ]; then \
+        # for some reason, upstream's php-fpm.conf.default has "include=NONE/etc/php-fpm.d/*.conf"
+        sed 's!=NONE/!=!g' php-fpm.conf.default | tee php-fpm.conf > /dev/null; \
+        cp php-fpm.d/www.conf.default php-fpm.d/www.conf; \
+    else \
+        mkdir php-fpm.d; \
+        cp php-fpm.conf.default php-fpm.d/www.conf; \
+        { \
+            echo '[global]'; \
+            echo 'include=/etc/php-fpm.d/*.conf'; \
+        } | tee php-fpm.conf; \
+    fi \
+    && { \
+        echo '[global]'; \
+        echo 'error_log = /proc/self/fd/2'; \
+        echo 'daemonize = no'; \
+        echo; \
+        echo '[www]'; \
+        echo 'access.log = /proc/self/fd/2'; \
+        echo 'clear_env = no'; \
+        echo 'catch_workers_output = yes'; \
+        echo 'user = nginx'; \
+        echo 'group = nginx'; \
+        echo 'listen.backlog = 4096'; \
+        echo 'listen.owner = nginx'; \
+        echo 'listen.group = nginx'; \
+        echo 'listen.mode = 0660'; \
+        echo 'listen = [::]:9000'; \
+        echo ';listen = /var/run/php-fpm.sock'; \
+        echo 'rlimit_files = 65536'; \
+        echo 'pm = dynamic'; \
+        echo 'pm.max_children = 150'; \
+        echo 'pm.start_servers = 10'; \
+        echo 'pm.min_spare_servers = 10'; \
+        echo 'pm.max_spare_servers = 100'; \
+        echo 'request_terminate_timeout = 10m'; \
+    	} | tee php-fpm.d/socket.conf \
+	&& ln -s /etc/php-fpm.conf /usr/local/etc/php-fpm.conf
 
 COPY docker-php-ext-* /usr/local/bin/
 
 RUN docker-php-ext-install bcmath intl mbstring mcrypt mysqli opcache pdo_mysql
 
-ADD ./walle.ini /usr/local/etc/php/conf.d/walle.ini
+ADD ./walle.ini /etc/php/conf.d/walle.ini
 ADD ./entrypoint.sh /entrypoint.sh
 ADD ./nginx.conf /etc/nginx/nginx.conf
 
@@ -163,13 +205,11 @@ RUN   curl -sS https://getcomposer.org/installer | php \
 RUN   git clone https://github.com/meolu/walle-web /opt/walle-web \
       &&composer install --prefer-dist --no-dev --optimize-autoloader -vvvv \
       && chmod +x /entrypoint.sh \
-      && chown -R www-data:nginx /opt/walle-web \
+      && chown -R nginx:nginx /opt/walle-web \
       && mkdir -p /opt/mysql/walle \
       && chown -R mysql:mysql /opt/mysql/walle \
       && apk del .build-deps \
       && apk del .fetch-deps \
-      && apk del .build-deps \
-      && apk del .gettext \
       && rm -rf /usr/src/php*
 
 ENV SERVER_NAME="walle.company.com"  DATADIR="/opt/mysql"

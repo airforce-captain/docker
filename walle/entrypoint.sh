@@ -24,6 +24,7 @@ fi
 
 #if no index
 if [ ! -e /var/www/html/index.php ];then
+  mkdir -p /var/www/html
   echo '<?php' >/var/www/html/index.php
   echo 'phpinfo();' >>/var/www/html/index.php
   echo '?>' >>/var/www/html/index.php

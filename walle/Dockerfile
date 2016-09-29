@@ -144,15 +144,12 @@ RUN set -xe \
     			| xargs -r apk info --installed \
     			| sort -u \
     	)" \
-    	&& apk add --no-cache --virtual .php-rundeps $runDeps \
-    	\
-	&& apk del .fetch-deps \
-	&& apk del .build-deps \
-	&& apk del .gettext 
+    	&& apk add --no-cache --virtual .php-rundeps $runDeps 
+    	
 
-    COPY docker-php-ext-* /usr/local/bin/
+COPY docker-php-ext-* /usr/local/bin/
 
-    RUN docker-php-ext-install bcmath intl mbstring mcrypt mysqli opcache pdo_mysql
+RUN docker-php-ext-install bcmath intl mbstring mcrypt mysqli opcache pdo_mysql
 
 ADD ./walle.ini /usr/local/etc/php/conf.d/walle.ini
 ADD ./entrypoint.sh /entrypoint.sh
@@ -170,6 +167,9 @@ RUN   git clone https://github.com/meolu/walle-web /opt/walle-web \
       && mkdir -p /opt/mysql/walle \
       && chown -R mysql:mysql /opt/mysql/walle \
       && apk del .build-deps \
+      && apk del .fetch-deps \
+      && apk del .build-deps \
+      && apk del .gettext \
       && rm -rf /usr/src/php*
 
 ENV SERVER_NAME="walle.company.com"  DATADIR="/opt/mysql"

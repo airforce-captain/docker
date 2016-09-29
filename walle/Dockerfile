@@ -6,10 +6,6 @@ LABEL description="walle 包含LNMP集成版测试"
 
 RUN mkdir -p /opt/walle-web && apk add --no-cache --virtual .persistent-deps \
             git \
-            libmcrypt-dev \
-            gettext \
-            icu-libs \
-            zlib-dev 
             nginx \
             mysql \
             unzip \
@@ -17,6 +13,12 @@ RUN mkdir -p /opt/walle-web && apk add --no-cache --virtual .persistent-deps \
             ansible \
             openssh-client
 
+RUN apk add --no-cache --virtual .build-deps \
+            libmcrypt-dev \
+            gettext \
+            icu-libs \
+            zlib-dev 
+	    
 RUN docker-php-ext-install bcmath intl mbstring mcrypt mysqli opcache pdo_mysql
 
 ADD ./walle.ini /usr/local/etc/php/conf.d/walle.ini
@@ -34,7 +36,8 @@ RUN   git clone https://github.com/meolu/walle-web /opt/walle-web \
       && chown -R www-data:nginx /opt/walle-web \
       && mkdir -p /opt/mysql/walle \
       && chown -R mysql:mysql /opt/mysql/walle \
-      && apk del .build-deps
+      && apk del .build-deps \
+      && rm -rf /usr/src/php*
 
 ENV SERVER_NAME="walle.company.com"  DATADIR="/opt/mysql"
 

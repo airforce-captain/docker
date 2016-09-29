@@ -11,10 +11,15 @@ if [ ! -d "$DATADIR/mysql" ]; then
 	mysqld_safe --user=mysql --datadir=$DATADIR&
 	sleep 5
 else
-	mkdir -p $DATADIR/walle
-	chown -R mysql $DATADIR/walle
-	mysqld_safe --user=mysql --datadir=$DATADIR&
-	sleep 5
+	if [ ! -d "$DATADIR/walle" ]; then
+		mkdir -p $DATADIR/walle
+		chown -R mysql $DATADIR/walle
+		mysqld_safe --user=mysql --datadir=$DATADIR&
+		sleep 5
+	else
+		mysqld_safe --user=mysql --datadir=$DATADIR&
+		sleep 5
+	fi
 fi
 
 #if no index

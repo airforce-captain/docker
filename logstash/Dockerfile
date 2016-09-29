@@ -1,5 +1,9 @@
 FROM java:8-jre
 
+MAINTAINER YougnMan <bushengquan@eastspider.com>
+
+LABEL description="自定义logstash配置的docker image, 增加了配置nginx与postfix的自定义日志格式匹配."
+
 # install plugin dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
 		libzmq3 \

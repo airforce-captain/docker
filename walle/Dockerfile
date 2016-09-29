@@ -4,14 +4,12 @@ MAINTAINER YougnMan <bushengquan@eastspider.com>
 
 LABEL description="walle 包含LNMP集成版测试"
 
-RUN mkdir -p /opt/walle-web && apk add --no-cache --virtual .build-deps \
-            gettext \
-            libmcrypt-dev \
-            icu-libs \
-            zlib-dev 
-
 RUN mkdir -p /opt/walle-web && apk add --no-cache --virtual .persistent-deps \
             git \
+            libmcrypt-dev \
+            gettext \
+            icu-libs \
+            zlib-dev 
             nginx \
             mysql \
             unzip \

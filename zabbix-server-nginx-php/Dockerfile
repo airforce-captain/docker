@@ -76,6 +76,7 @@ ADD conf/tmp/font-config /tmp/font-config
 RUN apk add ${APK_FLAGS_DEV} --virtual build-dependencies \
             alpine-sdk \
 	    musl-dev \
+	    linux-headers \
 	    python-dev \
             coreutils \
             gettext \
@@ -121,7 +122,7 @@ RUN apk add ${APK_FLAGS_DEV} --virtual build-dependencies \
     cp src/zabbix_server/zabbix_server /usr/sbin/zabbix_server && \
     cp conf/zabbix_server.conf /etc/zabbix/zabbix_server.conf && \
     cp src/zabbix_get/zabbix_get /usr/bin/zabbix_get && \
-    cp src/zabbix_get/zabbix_sender /usr/bin/zabbix_sender && \
+    cp src/zabbix_sender/zabbix_sender /usr/bin/zabbix_sender && \
     chown --quiet -R zabbix:root /etc/zabbix && \
     cp database/${DB_TYPE}/schema.sql /usr/share/doc/zabbix-server-${DB_TYPE}/ && \
     cp database/${DB_TYPE}/images.sql /usr/share/doc/zabbix-server-${DB_TYPE}/ && \

@@ -5,12 +5,12 @@ services:
   ports:
    - "10051:10051"
    - "80:80"
-  volumes:
-   - /etc/localtime:/etc/localtime:ro
-   - /etc/timezone:/etc/timezone:ro
-   - /usr/lib/zabbix/alertscripts:/usr/lib/zabbix/alertscripts:ro
-   - /usr/lib/zabbix/externalscripts:/usr/lib/zabbix/externalscripts:ro
-   - /var/lib/zabbix/ssh_keys:/var/lib/zabbix/ssh_keys:ro
+#  volumes:
+#   - /etc/localtime:/etc/localtime:ro
+#   - /etc/timezone:/etc/timezone:ro
+#   - /usr/lib/zabbix/alertscripts:/usr/lib/zabbix/alertscripts:ro
+#   - /usr/lib/zabbix/externalscripts:/usr/lib/zabbix/externalscripts:ro
+#   - /var/lib/zabbix/ssh_keys:/var/lib/zabbix/ssh_keys:ro
   links:
    - mariadb:mysql-server
   ulimits:
@@ -50,9 +50,9 @@ services:
 
  mariadb:
   image: mariadb
-  volumes:
-    - /opt/mysql/conf.d:/etc/mysql/conf.d
-    - /opt/mysql/data:/var/lib/mysql
+#  volumes:
+#    - /opt/mysql/conf.d:/etc/mysql/conf.d
+#    - /opt/mysql/data:/var/lib/mysql
   environment:
     - MYSQL_ROOT_PASSWORD=eastspider
   ports:

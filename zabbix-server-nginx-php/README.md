@@ -27,7 +27,7 @@ docker run -d \
   --link mariadb:mysql-server \
   --user root \
   -e MYSQL_USER="root" \
-  -e MYSQL_PASSWORD="passwd123" \
+  -e MYSQL_PASSWORD="root_sec_pass" \
   -e MYSQL_DATABASE=zabbix \
   -e ZBX_SERVER_HOST=zabbix-server \
   -e DB_SERVER_HOST=mysql-server \

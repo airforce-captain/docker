@@ -2,7 +2,10 @@
 
 set -e
 
-# Add elasticsearch as command if needed
+source /etc/profile
+export PATH=$PATH:/usr/share/elasticsearch/bin
+
+ #Add elasticsearch as command if needed
 if [ "${1:0:1}" = '-' ]; then
 	set -- elasticsearch sh "$@"
 fi
@@ -16,12 +19,6 @@ if [ "$1" = 'elasticsearch' -a "$(id -u)" = '0' ]; then
 	set -- gosu elasticsearch sh "$@"
 	#exec gosu elasticsearch "$BASH_SOURCE" "$@"
 fi
-
-
-#set name
-
-
-
 
 
 # As argument is not related to elasticsearch,

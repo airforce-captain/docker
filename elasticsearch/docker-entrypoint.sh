@@ -4,7 +4,7 @@ set -e
 
 # Add elasticsearch as command if needed
 if [ "${1:0:1}" = '-' ]; then
-	set -- elasticsearch "$@"
+	set -- elasticsearch sh "$@"
 fi
 
 # Drop root privileges if we are running elasticsearch
@@ -13,7 +13,7 @@ if [ "$1" = 'elasticsearch' -a "$(id -u)" = '0' ]; then
 	# Change the ownership of /usr/share/elasticsearch/data to elasticsearch
 	chown -R elasticsearch:elasticsearch /usr/share/elasticsearch/data
 	
-	set -- gosu elasticsearch "$@"
+	set -- gosu elasticsearch sh "$@"
 	#exec gosu elasticsearch "$BASH_SOURCE" "$@"
 fi
 

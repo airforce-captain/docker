@@ -15,12 +15,14 @@
 ### 如何使用?
 
 #### 1. 直接使用image,首先拉取镜像:
+
 ```
 docker pull qq58945591/zabbix-server-nginx-php
 ```
 启动之前,需要事先准备一个数据库容器.然后使用link命令链接到数据库.如果使用外部已存在的数据库则无需增加link参数,需要指定数据库地址.
 
 for example:
+
 ```
 docker run -d \
   --name zabbix-server \

@@ -1,58 +1,70 @@
-FROM java:8-jre
+FROM alpine:latest
 
 MAINTAINER YougnMan <bushengquan@eastspider.com>
 
-LABEL description="自定义logstash配置的docker image, 增加了配置nginx与postfix的自定义日志格式匹配."
+LABEL description="使用轻量级alpine linux重新打包image,自定义logstash配置的docker image, 增加了配置nginx与postfix的自定义日志格式匹配."
 
-# install plugin dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
-		apt-transport-https \
-		libzmq3 \
-	&& rm -rf /var/lib/apt/lists/*
-
-# the "ffi-rzmq-core" gem is very picky about where it looks for libzmq.so
-RUN mkdir -p /usr/local/lib && \
-	mkdir -p /etc/logstash/conf.d/patterns.d && \
-	wget http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz -O /etc/logstash/conf.d/GeoLite2-City.mmdb.gz && \
-	gzip -d /etc/logstash/conf.d/GeoLite2-City.mmdb.gz \
-	&& ln -s /usr/lib/*/libzmq.so.3 /usr/local/lib/libzmq.so
-
-# grab gosu for easy step-down from root
-ENV GOSU_VERSION 1.7
+ENV GOSU_VERSION 1.10
 RUN set -x \
-	&& wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture)" \
-	&& wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture).asc" \
-	&& export GNUPGHOME="$(mktemp -d)" \
-	&& gpg --keyserver ha.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
-	&& gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu \
-	&& rm -r "$GNUPGHOME" /usr/local/bin/gosu.asc \
-	&& chmod +x /usr/local/bin/gosu \
-	&& gosu nobody true
+    && apk add --no-cache --virtual .gosu-deps \
+        dpkg \
+        gnupg \
+        openssl \
+    && dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')" \
+    && wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch" \
+    && chmod +x /usr/local/bin/gosu \
+    && gosu nobody true 
 
-# https://www.elastic.co/guide/en/logstash/5.0/installing-logstash.html#_apt
-# https://artifacts.elastic.co/GPG-KEY-elasticsearch
-RUN apt-key adv --keyserver ha.pool.sks-keyservers.net --recv-keys 46095ACC8548582C1A2699A9D27D666CD88E42B4
+#install jdk,bash,libzmq
+# Default to UTF-8 file.encoding
+ENV LANG C.UTF-8
 
-RUN echo 'deb https://artifacts.elastic.co/packages/5.x/apt stable main' > /etc/apt/sources.list.d/logstash.list
+# add a simple script that can auto-detect the appropriate JAVA_HOME value
+# based on whether the JDK or only the JRE is installed
+RUN { \
+		echo '#!/bin/sh'; \
+		echo 'set -e'; \
+		echo; \
+		echo 'dirname "$(dirname "$(readlink -f "$(which javac || which java)")")"'; \
+	} > /usr/local/bin/docker-java-home \
+	&& chmod +x /usr/local/bin/docker-java-home
+ENV JAVA_HOME /usr/lib/jvm/java-1.8-openjdk/jre
+ENV PATH $PATH:/usr/lib/jvm/java-1.8-openjdk/jre/bin:/usr/lib/jvm/java-1.8-openjdk/bin
 
-ENV LOGSTASH_VERSION 1:5.0.0-1
+ENV JAVA_VERSION 8u92
+ENV JAVA_ALPINE_VERSION 8.92.14-r1
 
 RUN set -x \
-	&& apt-get update \
-	&& apt-get install -y --no-install-recommends logstash=$LOGSTASH_VERSION \
-	&& rm -rf /var/lib/apt/lists/*
+	&& apk add --no-cache \
+		openjdk8-jre="$JAVA_ALPINE_VERSION" \
+		libzmq \
+		bash \
+	&& [ "$JAVA_HOME" = "$(docker-java-home)" ]
 
+
+ENV LOGSTASH_VERSION 5.0.0
 ENV PATH /usr/share/logstash/bin:$PATH
-
-# necessary for 5.0+ (overriden via "--path.settings", ignored by < 5.0)
 ENV LS_SETTINGS_DIR /etc/logstash
-# comment out some troublesome configuration parameters
-#   path.log: logs should go to stdout
-#   path.config: No config files found: /etc/logstash/conf.d/*
-RUN set -ex \
+
+RUN mkdir -p /etc/logstash/conf.d/patterns.d \
+	&& cd /usr/share \
+	&& wget https://artifacts.elastic.co/downloads/logstash/logstash-${LOGSTASH_VERSION}.tar.gz \
+	&& tar xf logstash-${LOGSTASH_VERSION}.tar.gz \
+	&& mv logstash-${LOGSTASH_VERSION} logstash \
+	&& cp /usr/share/logstash/config/* /etc/logstash/ \
+	&& wget http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz -O /etc/logstash/conf.d/GeoLite2-City.mmdb.gz \
+        && gzip -d /etc/logstash/conf.d/GeoLite2-City.mmdb.gz \
 	&& if [ -f "$LS_SETTINGS_DIR/logstash.yml" ]; then \
-		sed -ri 's!^(path.log|path.config):!#&!g' "$LS_SETTINGS_DIR/logstash.yml"; \
-	fi
+                sed -ri 's!^(path.log|path.config):!#&!g' "$LS_SETTINGS_DIR/logstash.yml"; \
+   	   fi \
+	&&addgroup logstash \
+            && adduser -S \
+                    -D -G logstash \
+                    -h /usr/share/logstash/ \
+                logstash \
+            && chown -R logstash:logstash /usr/share/logstash \
+	&& apk del .gosu-deps \
+	&& rm -f /usr/share/logstash-${LOGSTASH_VERSION}.tar.gz
 
 #add configfile
 ADD ./logstash.conf /etc/logstash/conf.d

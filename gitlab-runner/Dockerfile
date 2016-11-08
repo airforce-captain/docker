@@ -4,7 +4,10 @@ MAINTAINER YougnMan <bushengquan@eastspider.com>
 
 LABEL description="这个是基于gitlab官方的Dockerfile来build的image,增加一些额外需要的软件包,测试中."
 
-RUN apk --no-cache update && apk add --update \
+RUN set -xe \
+    	&& echo 'http://mirrors.ustc.edu.cn/alpine/v3.4/main' > /etc/apk/repositories \
+    	&& echo 'http://mirrors.ustc.edu.cn/alpine/v3.4/community' >> /etc/apk/repositories \
+	&& apk --no-cache update && apk add --update \
 		bash \
 		ca-certificates \
 		git \

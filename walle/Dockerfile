@@ -14,6 +14,8 @@ ENV PHPIZE_DEPS \
 		pkgconf \
 		re2c  
 RUN set -xe \
+    	&& echo 'http://mirrors.ustc.edu.cn/alpine/v3.4/main' > /etc/apk/repositories \
+    	&& echo 'http://mirrors.ustc.edu.cn/alpine/v3.4/community' >> /etc/apk/repositories \
 	&&apk add --no-cache --virtual .persistent-deps \
 		ca-certificates \
 		curl \

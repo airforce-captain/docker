@@ -1,4 +1,6 @@
-#关于本镜像:
+[![](https://images.microbadger.com/badges/image/qq58945591/logstash.svg)](https://microbadger.com/images/qq58945591/logstash "Get your own image badge on microbadger.com")
+
+# 关于本镜像:
 
 1. 自定义logstash配置的docker image, 增加了配置nginx与postfix的自定义日志格式匹配..
 2. 增加了geoip数据库。可以方便调用ip数据库, 在logstash 5.0之后使用的数据库是GeoLite2-City.mmdb. 

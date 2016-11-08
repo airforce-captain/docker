@@ -1,3 +1,5 @@
+[![](https://images.microbadger.com/badges/image/qq58945591/nginx_php-fpm.svg)](https://microbadger.com/images/qq58945591/nginx_php-fpm "Get your own image badge on microbadger.com")
+
 # 关于本镜像:
 
 打包nginx与php-fpm，方便做测试.

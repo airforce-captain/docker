@@ -1,7 +1,10 @@
+# 关于本镜像:
+
 打包nginx与php-fpm，方便做测试.
 
-nginx 直接使用官方编译参数:
+#### nginx 直接使用官方编译参数:
 
+```
 ./configure \
 --prefix=/etc/nginx \
 --sbin-path=/usr/sbin/nginx \
@@ -43,11 +46,11 @@ nginx 直接使用官方编译参数:
 --with-file-aio \
 --with-http_v2_module \
 --with-ipv6
+```
 
-#------------------------------------------------#
+#### php 编译为php-fpm,包含常用php扩展:
 
-php 编译为php-fpm,包含常用php扩展:
-
+```
 ./configure \
 --with-config-file-path="/etc/php" \
 --with-config-file-scan-dir="/etc/php/conf.d" \
@@ -86,7 +89,8 @@ php 编译为php-fpm,包含常用php扩展:
 --with-imap \
 --with-litespeed \
 --with-bz2 
+```
+#### 支持扩展列表:
 
-#--------------------------------------#
-支持扩展列表:
 bz2 Core ctype curl date dom ereg exif fileinfo filter ftp gd gettext hash iconv imap intl json libxml mbstring mcrypt mhash mysqli mysqlnd openssl pcre PDO pdo_mysql pdo_sqlite Phar posix readline redis Reflection session SimpleXML sockets SPL sqlite3 standard sysvsem sysvshm tokenizer xml xmlreader xmlwriter OPcache zip zlib
+

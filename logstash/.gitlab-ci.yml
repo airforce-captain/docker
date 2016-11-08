@@ -1,0 +1,16 @@
+stages:
+  - build_image
+#  - push_image
+
+before_script:
+  - docker info
+
+build_image:
+  stage: build_image
+  script:
+    - docker build --rm -t logstash .
+
+#push_image:
+#  stage: push_image
+#  script:
+#    - docker push myregistry/aplusplus/ubuntu:14.04

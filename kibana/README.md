@@ -1,9 +1,4 @@
-<<<<<<< HEAD
-#关于本镜像.
-
-
-=======
-#关于本镜像
+# 关于本镜像
 
 ELK官方使用debian做为系统底层,导致image体积很大,通过改造使用轻量级alpine linux作为系统底层,体积缩小至原来的一半.
 
@@ -26,4 +21,3 @@ docker run --name kibana --link some-elasticsearch:elasticsearch -p 5601:5601 -d
 ```
 docker run --name kibana -e ELASTICSEARCH_URL=http://some-elasticsearch:9200 -p 5601:5601 -d kibana
 ```
->>>>>>> 5df0194e27ba5e893efd44327c875235925d0ecf

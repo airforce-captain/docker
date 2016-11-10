@@ -18,6 +18,7 @@
 
 ```
 docker pull qq58945591/zabbix-server-nginx-php
+
 ```
 启动之前,需要事先准备一个数据库容器.然后使用link命令链接到数据库.如果使用外部已存在的数据库则无需增加link参数,需要指定数据库地址.
 
@@ -44,10 +45,3 @@ docker run -d \
   zabbix-server-nginx-php
 ```
 
-#### 2. 使用源码自行定制构建.
-
-```
-git clone https://github.com/airforce-captain/docker/tree/master/zabbix-server-nginx-php
-cd zabbix-server-nginx-php
-docker build -t zabbix-server-nginx-php .
-```

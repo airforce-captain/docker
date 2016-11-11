@@ -10,7 +10,7 @@ ELK官方使用debian做为系统底层,导致image体积很大,通过改造使�
 docker pull qq58945591/kibana
 ```
 
-运行容器,默认监听端口在5601:
+运行容器,默认监听端口在5601,并且必须要指定elasticsearch的位置:
 
 ```
 docker run --name kibana --link some-elasticsearch:elasticsearch -p 5601:5601 -d kibana

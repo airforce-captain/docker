@@ -1,3 +1,4 @@
+[![](https://images.microbadger.com/badges/image/qq58945591/zabbix-server-nginx-php.svg)](https://microbadger.com/images/qq58945591/zabbix-server-nginx-php "Get your own image badge on microbadger.com")
 # 关于本镜像
 
 写在前面: 由于误操作,导致之前编辑好的东西被清空了,忘记commit了,fuck～

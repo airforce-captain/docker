@@ -1,3 +1,4 @@
+[![](https://images.microbadger.com/badges/image/qq58945591/elasticsearch.svg)](https://microbadger.com/images/qq58945591/elasticsearch "Get your own image badge on microbadger.com")
 # 关于本镜像.
 
 ELK官方image使用了debian做基础镜像, 体积较为臃肿, 因此便有了改造的想法,通过改造后,体积只有官方镜像的一半大. 使用轻量alpine linux 作为基础.

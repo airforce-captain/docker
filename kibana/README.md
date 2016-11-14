@@ -1,3 +1,4 @@
+[![](https://images.microbadger.com/badges/image/qq58945591/kibana.svg)](https://microbadger.com/images/qq58945591/kibana "Get your own image badge on microbadger.com")
 # 关于本镜像
 
 ELK官方使用debian做为系统底层,导致image体积很大,通过改造使用轻量级alpine linux作为系统底层,体积缩小至原来的一半.

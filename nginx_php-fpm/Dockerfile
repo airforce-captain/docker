@@ -2,9 +2,9 @@ FROM alpine:3.4
 
 MAINTAINER YoungMan "bushengquan@eastspider.com"
 
-LABEL description="打包nginx 和php-fpm 在一起，方便测试一些lnmp架构的东西"
+LABEL description="集成nginx,php5.4.45"
 
-ENV NGINX_VERSION 1.10.1
+ENV NGINX_VERSION 1.10.2
 
 RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 	&& CONFIG="\
@@ -52,6 +52,8 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 	" \
 	&& addgroup -S nginx \
 	&& adduser -D -S -h /var/cache/nginx -s /sbin/nologin -G nginx nginx \
+	&& echo 'http://192.168.0.252/alpine/v3.4/main' > /etc/apk/repositories \
+    	&& echo 'http://192.168.0.252/alpine/v3.4/community' >> /etc/apk/repositories \
 	&& apk add --no-cache --virtual .build-deps \
 		gcc \
 		libc-dev \
@@ -162,14 +164,14 @@ RUN mkdir -p $PHP_INI_DIR/conf.d
 
 ENV PHP_EXTRA_CONFIGURE_ARGS --enable-fpm --with-fpm-user=nginx --with-fpm-group=nginx
 
-ENV GPG_KEYS 0BD78B5F97500D450838F95DFE857D9A90D90EC1 6E4F6AB321FDC07F2C332E3AC2BF0BC433CFC8B3
-
-ENV PHP_VERSION 5.6.26
-ENV PHP_FILENAME php-5.6.26.tar.xz
-ENV PHP_SHA256 203a854f0f243cb2810d1c832bc871ff133eccdf1ff69d32846f93bc1bef58a8
+ENV PHP_VERSION 5.4.45
+ENV PHP_FILENAME php-5.4.45.tar.bz2
 
 ENV REDIS_VERSION 2.2.8
 ENV REDIS_FILENAME redis-2.2.8.tgz
+
+ENV OP_VERSION 7.0.5
+ENV OP_FILENAME zendopcache-7.0.5.tgz
 
 RUN set -xe \
 	&& apk add --no-cache --virtual .fetch-deps \
@@ -177,17 +179,7 @@ RUN set -xe \
 		curl \
 	&& mkdir -p /usr/src \
 	&& cd /usr/src \
-	&& curl -fSL "https://secure.php.net/get/$PHP_FILENAME/from/this/mirror" -o php.tar.xz \
-	&& echo "$PHP_SHA256 *php.tar.xz" | sha256sum -c - \
-	&& curl -fSL "https://secure.php.net/get/$PHP_FILENAME.asc/from/this/mirror" -o php.tar.xz.asc \
-	&& export GNUPGHOME="$(mktemp -d)" \
-	&& for key in $GPG_KEYS; do \
-		gpg --keyserver ha.pool.sks-keyservers.net --recv-keys "$key"; \
-	done \
-	&& gpg --batch --verify php.tar.xz.asc php.tar.xz \
-	&& rm -r "$GNUPGHOME" 
-
-    RUN set -xe \
+	&& curl -fSL "https://secure.php.net/get/$PHP_FILENAME/from/this/mirror" -o php.tar.bz2 \
     	&& apk add --no-cache --virtual .build-deps \
     		$PHPIZE_DEPS \
     		curl-dev \
@@ -209,11 +201,15 @@ RUN set -xe \
 		freetype-dev \
 		imap-dev \
 		bzip2-dev \
+		bison \
     	&& docker-php-source extract \
     	&& cd /usr/src/php \
 	&& wget http://pecl.php.net/get/$REDIS_FILENAME -O /usr/src/php/ext/redis.tgz \
+	&& wget http://pecl.php.net/get/$OP_FILENAME -O /usr/src/php/ext/opcache.tgz \
 	&& tar xf /usr/src/php/ext/redis.tgz -C /usr/src/php/ext \
+	&& tar xf /usr/src/php/ext/opcache.tgz -C /usr/src/php/ext \
 	&& mv /usr/src/php/ext/redis-${REDIS_VERSION} /usr/src/php/ext/redis \
+	&& mv /usr/src/php/ext/zendopcache-${OP_VERSION} /usr/src/php/ext/opcache \
     	&& ./configure \
     		--with-config-file-path="$PHP_INI_DIR" \
     		--with-config-file-scan-dir="$PHP_INI_DIR/conf.d" \
@@ -227,11 +223,11 @@ RUN set -xe \
 		--enable-sockets \
 		--enable-sysvsem \
 		--enable-sysvshm \
-		--enable-opcache \
 		--enable-exif \
 		--enable-zip \
 		--enable-intl \
 		--enable-mbregex \
+		--enable-gd-native-ttf \
     		\
 		--with-pcre-regex \
     		--with-curl \
@@ -247,7 +243,6 @@ RUN set -xe \
 		--with-pcre-dir \
 		--with-jpeg-dir \
 		--with-png-dir \
-		--with-vpx-dir \
 		--with-freetype-dir \
 		--with-imap \
 		--with-litespeed \
@@ -257,12 +252,30 @@ RUN set -xe \
     	&& make -j"$(getconf _NPROCESSORS_ONLN)" \
     	&& make install \
 	&& cp php.ini-production $PHP_INI_DIR/php.ini \
+	&& sed -ri "s#upload_max_filesize = 2M#upload_max_filesize = 30M#" /etc/php/php.ini \
+	&& sed -ri "s#post_max_size = 8M#post_max_size = 30M#" /etc/php/php.ini \
 	&& cd /usr/src/php/ext/redis \
 	&& phpize \
 	&& ./configure --with-php-config=/usr/local/bin/php-config \
 	&& make \
 	&& make install \
-	&& echo 'extension="redis.so"' >> $PHP_INI_DIR/php.ini \
+	&& echo '[redis]' >> $PHP_INI_DIR/conf.d/redis.ini \
+	&& echo 'extension="redis.so"' >> $PHP_INI_DIR/conf.d/redis.ini \
+        && cd /usr/src/php/ext/opcache \
+        && phpize \
+        && ./configure --with-php-config=/usr/local/bin/php-config --enable-opcache \
+        && make \
+        && make install \
+	&&{ \
+	   echo '[opcache]'; \
+	   echo 'zend_extension="/usr/local/lib/php/extensions/no-debug-non-zts-20100525/opcache.so"'; \
+	   echo 'opcache.memory_consumption=128'; \
+	   echo 'opcache.interned_strings_buffer=8'; \
+	   echo 'opcache.max_accelerated_files=4000'; \
+	   echo 'opcache.revalidate_freq=60'; \
+	   echo 'opcache.fast_shutdown=1'; \
+	   echo 'opcache.enable_cli=1'; \
+	} | tee $PHP_INI_DIR/conf.d/opcache.ini \
 	&& cd /usr/src/php \
     	&& { find /usr/local/bin /usr/local/sbin -type f -perm +0111 -exec strip --strip-all '{}' + || true; } \
     	&& make clean \
@@ -283,7 +296,7 @@ RUN set -xe \
 
     COPY docker-php-ext-* /usr/local/bin/
 
-    RUN docker-php-ext-install bcmath intl mbstring mcrypt mysqli opcache pdo_mysql
+    RUN docker-php-ext-install bcmath intl mbstring mcrypt mysqli pdo_mysql
 
     WORKDIR /usr/share/nginx/html
 
@@ -316,7 +329,7 @@ RUN set -xe \
             echo 'listen.owner = nginx'; \
             echo 'listen.group = nginx'; \
             echo 'listen.mode = 0660'; \
-            echo 'listen = [::]:9000'; \
+            echo 'listen = 9000'; \
             echo ';listen = /var/run/php-fpm.sock'; \
             echo 'rlimit_files = 65536'; \
             echo 'pm = dynamic'; \
@@ -326,7 +339,7 @@ RUN set -xe \
             echo 'pm.max_spare_servers = 100'; \
             echo 'request_terminate_timeout = 10m'; \
     	} | tee php-fpm.d/socket.conf \
-	&& rm -f /usr/src/php.tar* \
+	&& rm -rf /usr/src/php* \
 	&& ln -s /etc/php-fpm.conf /usr/local/etc/php-fpm.conf
 
 

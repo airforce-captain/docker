@@ -2,7 +2,7 @@
 
 # 关于本镜像:
 
-打包nginx与php-fpm，方便做测试.
+打包nginx 1.10.2与php-fpm 5.4.45 添加redis,opcache 两个扩展,修改默认时区是Asia/Shanghai,修改php.ini 中最大上传为30M.
 
 #### nginx 直接使用官方编译参数:
 
@@ -81,6 +81,7 @@
 --with-gettext \
 --with-readline \
 --with-gd \
+--enable-gd-native-ttf \
 --with-mhash \
 --with-iconv-dir \
 --with-pcre-dir \

@@ -1,10 +1,10 @@
-FROM alpine:3.4
+FROM alpine:latest
 
 MAINTAINER YoungMan "bushengquan@eastspider.com"
 
-LABEL description="打包nginx 和php-fpm 在一起，方便测试一些lnmp架构的东西"
+LABEL description="打包nginx 1.10.2和php-fpm 5.6.26在一起，方便测试一些lnmp架构的东西"
 
-ENV NGINX_VERSION 1.10.1
+ENV NGINX_VERSION 1.10.2
 
 RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 	&& CONFIG="\
@@ -52,6 +52,8 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 	" \
 	&& addgroup -S nginx \
 	&& adduser -D -S -h /var/cache/nginx -s /sbin/nologin -G nginx nginx \
+    	&& echo 'http://mirrors.ustc.edu.cn/alpine/v3.4/main' > /etc/apk/repositories \
+    	&& echo 'http://mirrors.ustc.edu.cn/alpine/v3.4/community' >> /etc/apk/repositories \
 	&& apk add --no-cache --virtual .build-deps \
 		gcc \
 		libc-dev \
@@ -100,7 +102,7 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 	&& mkdir /etc/nginx/conf.d/ \
 	&& mkdir -p /usr/share/nginx/html/ \
 	&& echo '<?php ' >> /usr/share/nginx/html/index.php \
-	&& echo 'phpinfo()' >> /usr/share/nginx/html/index.php \
+	&& echo 'phpinfo();' >> /usr/share/nginx/html/index.php \
 	&& echo '?>' >> /usr/share/nginx/html/index.php \
 	&& install -m644 html/index.html /usr/share/nginx/html/ \
 	&& install -m644 html/50x.html /usr/share/nginx/html/ \
@@ -209,6 +211,7 @@ RUN set -xe \
 		freetype-dev \
 		imap-dev \
 		bzip2-dev \
+		bison \
     	&& docker-php-source extract \
     	&& cd /usr/src/php \
 	&& wget http://pecl.php.net/get/$REDIS_FILENAME -O /usr/src/php/ext/redis.tgz \
@@ -232,6 +235,7 @@ RUN set -xe \
 		--enable-zip \
 		--enable-intl \
 		--enable-mbregex \
+		--enable-gd-native-ttf \
     		\
 		--with-pcre-regex \
     		--with-curl \
@@ -257,6 +261,8 @@ RUN set -xe \
     	&& make -j"$(getconf _NPROCESSORS_ONLN)" \
     	&& make install \
 	&& cp php.ini-production $PHP_INI_DIR/php.ini \
+	&& sed -ri "s#upload_max_filesize = 2M#upload_max_filesize = 30M#" /etc/php/php.ini \
+	&& sed -ri "s#post_max_size = 8M#post_max_size = 30M#" /etc/php/php.ini \
 	&& cd /usr/src/php/ext/redis \
 	&& phpize \
 	&& ./configure --with-php-config=/usr/local/bin/php-config \
@@ -316,7 +322,7 @@ RUN set -xe \
             echo 'listen.owner = nginx'; \
             echo 'listen.group = nginx'; \
             echo 'listen.mode = 0660'; \
-            echo 'listen = [::]:9000'; \
+            echo 'listen = 9000'; \
             echo ';listen = /var/run/php-fpm.sock'; \
             echo 'rlimit_files = 65536'; \
             echo 'pm = dynamic'; \

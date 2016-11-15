@@ -1,8 +1,14 @@
 [![](https://images.microbadger.com/badges/image/qq58945591/nginx_php-fpm.svg)](https://microbadger.com/images/qq58945591/nginx_php-fpm "Get your own image badge on microbadger.com")
 
 # 关于本镜像:
+tag:
+5.4.45
+latest
 
-打包nginx与php-fpm，方便做测试.
+#### 集成nginx 1.10.2与php-fpm 5.6.26:
+1. 增加一个redis扩展支持将session存储到redis.
+2. php.ini修改最大上传为30M.
+3. 默认时区为Asia/Shanghai.
 
 #### nginx 直接使用官方编译参数:
 
@@ -81,6 +87,7 @@
 --with-gettext \
 --with-readline \
 --with-gd \
+--enable-gd-native-ttf \
 --with-mhash \
 --with-iconv-dir \
 --with-pcre-dir \

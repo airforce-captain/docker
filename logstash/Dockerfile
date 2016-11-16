@@ -6,8 +6,6 @@ LABEL description="使用轻量级alpine linux重新打包image,自定义logstas
 
 ENV GOSU_VERSION 1.10
 RUN set -x \
-    && echo 'http://mirrors.ustc.edu.cn/alpine/v3.4/main' > /etc/apk/repositories \
-    && echo 'http://mirrors.ustc.edu.cn/alpine/v3.4/community' >> /etc/apk/repositories \
     && apk add --no-cache --virtual .gosu-deps \
         dpkg \
         gnupg \

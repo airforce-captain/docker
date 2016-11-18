@@ -1,4 +1,4 @@
-[![](https://images.microbadger.com/badges/image/qq58945591/walle-web.svg)](http://microbadger.com/images/qq58945591/walle-web "Get your own image badge on microbadger.com")
+[![](https://images.microbadger.com/badges/image/qq58945591/walle-web.svg)](http://microbadger.com/images/qq58945591/walle-web "Get your own image badge on microbadger.com")[![Docker Automated buil](https://img.shields.io/docker/automated/jrottenberg/ffmpeg.svg)](https://hub.docker.com/r/qq58945591/walle-web/)
 
 # 关于本镜像:
 

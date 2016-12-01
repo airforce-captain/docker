@@ -20,6 +20,7 @@ ARG APK_FLAGS_PERSISTANT="${APK_FLAGS_COMMON} --clean-protected --no-cache"
 ARG APK_FLAGS_DEV="${APK_FLAGS_COMMON} --no-cache"
 ENV TERM=xterm
 ENV ELASTICSEARCH_VERSION="5.0.0"
+ENV JAVA_ALPINE_VERSION 8.111.14-r0
 
 RUN cd /usr/share/ \
     && wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${ELASTICSEARCH_VERSION}.tar.gz \
@@ -31,7 +32,7 @@ RUN cd /usr/share/ \
                     -h /usr/share/elasticsearch/ \
                 elasticsearch \
             && apk add ${APK_FLAGS_PERSISTANT} \
-                  openjdk8-jre \
+                  openjdk8-jre="$JAVA_ALPINE_VERSION" \
 		  bash \
             && cd /usr/share/elasticsearch \
             && for path in \

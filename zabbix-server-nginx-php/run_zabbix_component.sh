@@ -142,9 +142,9 @@ check_variables_mysql() {
 
     # If root password is not specified use provided credentials
     DB_SERVER_ROOT_USER=${DB_SERVER_ROOT_USER:-${MYSQL_USER}}
-    [ "${MYSQL_ALLOW_EMPTY_PASSWORD}" == "true" ] || DB_SERVER_ROOT_PASS=${DB_SERVER_ROOT_PASS:-${MYSQL_PASSWORD}}
-    DB_SERVER_ZBX_USER=${MYSQL_USER:-"zabbix"}
-    DB_SERVER_ZBX_PASS=${MYSQL_PASSWORD:-"zabbix"}
+    [ "${MYSQL_ALLOW_EMPTY_PASSWORD}" == "true" ] || DB_SERVER_ROOT_PASS=${DB_SERVER_ROOT_PASS:-${MYSQL_ROOT_PASSWORD}}
+    DB_SERVER_ZBX_USER=${ZBX_USER:-"zabbix"}
+    DB_SERVER_ZBX_PASS=${ZBX_PASSWORD:-"zabbix"}
 
     if [ "$type" == "proxy" ]; then
         DB_SERVER_DBNAME=${MYSQL_DATABASE:-"zabbix_proxy"}
@@ -201,7 +201,8 @@ create_db_user_mysql() {
         mysql_query "SET PASSWORD FOR '${DB_SERVER_ZBX_USER}'@'%' = PASSWORD('${DB_SERVER_ZBX_PASS}');" 1>/dev/null
     fi
 
-    mysql_query "GRANT ALL PRIVILEGES ON $DB_SERVER_DBNAME. * TO '${DB_SERVER_ZBX_USER}'@'%'" 1>/dev/null
+    mysql_query "FLUSH PRIVILEGES;" 1>/dev/null
+    mysql_query "GRANT ALL PRIVILEGES ON $DB_SERVER_DBNAME.* TO '${DB_SERVER_ZBX_USER}'@'%'" 1>/dev/null
 }
 
 create_db_database_mysql() {

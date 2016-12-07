@@ -28,7 +28,10 @@ RUN set -xe \
         	openssh-client 
 
 ENV PHP_INI_DIR /etc/php
-RUN mkdir -p $PHP_INI_DIR/conf.d
+RUN mkdir -p $PHP_INI_DIR/conf.d && \
+        mkdir -p /etc/ansible && \
+        touch /etc/ansible/hosts && \
+        wget -q -O /etc/ansible/ansible.cfg https://raw.githubusercontent.com/ansible/ansible/devel/examples/ansible.cfg
 
 ENV PHP_EXTRA_CONFIGURE_ARGS --enable-fpm --with-fpm-user=nginx --with-fpm-group=nginx
 

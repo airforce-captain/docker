@@ -30,11 +30,13 @@ docker run -d \
   --name zabbix-server \
   --link mariadb:mysql-server \
   --user root \
-  -e MYSQL_USER="root" \
-  -e MYSQL_PASSWORD="root_sec_pass" \
+  -e ZBX_USER="zabbix" \
+  -e ZBX_PASSWORD="zabbix_sec_pass" \
   -e MYSQL_DATABASE=zabbix \
   -e ZBX_SERVER_HOST=zabbix-server \
   -e DB_SERVER_HOST=mysql-server \
+  -e DB_SERVER_ROOT_USER=root \
+  -e DB_SERVER_ROOT_PASS=root_sec_pass \
   -p 80:80 \
   -p 10051:10051 \
   -v /etc/localtime:/etc/localtime:ro \
@@ -43,6 +45,18 @@ docker run -d \
   -v /usr/lib/zabbix/externalscripts:/usr/lib/zabbix/externalscripts:ro \
   -v /var/lib/zabbix/ssh_keys:/var/lib/zabbix/ssh_keys:ro \
   --restart=always \
-  zabbix-server-nginx-php
+  qq58945591/zabbix-server-nginx-php
 ```
+
+### 内置主要环境变量
+
+ZBX_USER
+ZBX_PASSWORD
+MYSQL_DATABASE
+ZBX_SERVER_HOST
+DB_SERVER_HOST
+DB_SERVER_ROOT_USER
+DB_SERVER_ROOT_PASS
+
+
 

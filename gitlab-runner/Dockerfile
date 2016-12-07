@@ -12,6 +12,7 @@ RUN set -xe \
 		openssl \
 		wget \
     		python \
+		ansible \
     		bzip2 \
     		xz \
     		rsync \
@@ -23,7 +24,10 @@ RUN wget -q -O /usr/bin/gitlab-ci-multi-runner https://gitlab-ci-multi-runner-do
 	wget -q -O /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v1.1.1/dumb-init_1.1.1_amd64 && \
 	chmod +x /usr/local/bin/dumb-init && \
 	mkdir -p /etc/gitlab-runner/certs && \
-	chmod -R 700 /etc/gitlab-runner
+	chmod -R 700 /etc/gitlab-runner && \
+	mkdir -p /etc/ansible && \
+	touch /etc/ansible/hosts && \
+	wget -q -O /etc/ansible/ansible.cfg https://raw.githubusercontent.com/ansible/ansible/devel/examples/ansible.cfg
 
 VOLUME ["/etc/gitlab-runner"]
 ENTRYPOINT ["/usr/local/bin/dumb-init"]

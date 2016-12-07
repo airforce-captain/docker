@@ -8,3 +8,4 @@ git
 rsync
 wget
 python2.7
+ansible

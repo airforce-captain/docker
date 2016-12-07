@@ -20,12 +20,14 @@ services:
     hard: 40000
    mem_limit: 512m
   environment:
-    - MYSQL_USER=root
-    - MYSQL_PASSWORD=root_sec_pass
+    - ZBX_USER=zabbix
+    - ZBX_PASSWORD=zabbix_sec_pass
     - MYSQL_DATABASE=zabbix
     - TZ=Asia/Shanghai
     - ZBX_SERVER_HOST=zabbix-server
     - DB_SERVER_HOST=mysql-server
+    - DB_SERVER_ROOT_USER=root
+    - DB_SERVER_ROOT_PASS=root_sec_pass
     - ZBX_HOUSEKEEPINGFREQUENCY=1
     - ZBX_MAXHOUSEKEEPERDELETE=5000
     - ZBX_SENDERFREQUENCY=30

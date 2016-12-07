@@ -14,11 +14,11 @@ docker pull qq58945591/kibana
 运行容器,默认监听端口在5601,并且必须要指定elasticsearch的位置:
 
 ```
-docker run --name kibana --link some-elasticsearch:elasticsearch -p 5601:5601 -d kibana
+docker run --name kibana --link some-elasticsearch:elasticsearch -p 5601:5601 -d qq58945591/kibana
 ```
 
 也可以使用环境变量:
 
 ```
-docker run --name kibana -e ELASTICSEARCH_URL=http://some-elasticsearch:9200 -p 5601:5601 -d kibana
+docker run --name kibana -e ELASTICSEARCH_URL=http://some-elasticsearch:9200 -p 5601:5601 -d qq58945591/kibana
 ```

@@ -143,8 +143,8 @@ check_variables_mysql() {
     # If root password is not specified use provided credentials
     DB_SERVER_ROOT_USER=${DB_SERVER_ROOT_USER:-${MYSQL_USER}}
     [ "${MYSQL_ALLOW_EMPTY_PASSWORD}" == "true" ] || DB_SERVER_ROOT_PASS=${DB_SERVER_ROOT_PASS:-${MYSQL_ROOT_PASSWORD}}
-    DB_SERVER_ZBX_USER=${ZBX_USER:-"zabbix"}
-    DB_SERVER_ZBX_PASS=${ZBX_PASSWORD:-"zabbix"}
+    ZBX_USER=${ZBX_USER:-"zabbix"}
+    ZBX_PASSWORD=${ZBX_PASSWORD:-"zabbix"}
 
     if [ "$type" == "proxy" ]; then
         DB_SERVER_DBNAME=${MYSQL_DATABASE:-"zabbix_proxy"}
@@ -163,8 +163,8 @@ check_db_connect_mysql() {
         echo "* DB_SERVER_ROOT_USER: ${DB_SERVER_ROOT_USER}"
         echo "* DB_SERVER_ROOT_PASS: ${DB_SERVER_ROOT_PASS}"
     fi
-    echo "* DB_SERVER_ZBX_USER: ${DB_SERVER_ZBX_USER}"
-    echo "* DB_SERVER_ZBX_PASS: ${DB_SERVER_ZBX_PASS}"
+    echo "* DB_SERVER_ZBX_USER: ${ZBX_USER}"
+    echo "* DB_SERVER_ZBX_PASS: ${ZBX_PASSWORD}"
     echo "********************"
 
     WAIT_TIMEOUT=5
@@ -191,18 +191,18 @@ mysql_query() {
 create_db_user_mysql() {
     [ "${CREATE_ZBX_DB_USER}" == "true" ] || return
 
-    echo "** Creating '${DB_SERVER_ZBX_USER}' user in MySQL database"
+    echo "** Creating '${ZBX_USER}' user in MySQL database"
 
-    USER_EXISTS=$(mysql_query "SELECT 1 FROM mysql.user WHERE user = '${DB_SERVER_ZBX_USER}' AND host = '%'")
+    USER_EXISTS=$(mysql_query "SELECT 1 FROM mysql.user WHERE user = '${ZBX_USER}' AND host = '%'")
 
     if [ -z "$USER_EXISTS" ]; then
-        mysql_query "CREATE USER '${DB_SERVER_ZBX_USER}'@'%' IDENTIFIED BY '${DB_SERVER_ZBX_PASS}'" 1>/dev/null
+        mysql_query "CREATE USER '${ZBX_USER}'@'%' IDENTIFIED BY '${ZBX_PASSWORD}'" 1>/dev/null
     else
-        mysql_query "SET PASSWORD FOR '${DB_SERVER_ZBX_USER}'@'%' = PASSWORD('${DB_SERVER_ZBX_PASS}');" 1>/dev/null
+        mysql_query "SET PASSWORD FOR '${ZBX_USER}'@'%' = PASSWORD('${ZBX_PASSWORD}');" 1>/dev/null
     fi
 
     mysql_query "FLUSH PRIVILEGES;" 1>/dev/null
-    mysql_query "GRANT ALL PRIVILEGES ON $DB_SERVER_DBNAME.* TO '${DB_SERVER_ZBX_USER}'@'%'" 1>/dev/null
+    mysql_query "GRANT ALL PRIVILEGES ON $DB_SERVER_DBNAME.* TO '${ZBX_USER}'@'%' IDENTIFIED BY '${ZBX_PASSWORD}';" 1>/dev/null
 }
 
 create_db_database_mysql() {
@@ -212,7 +212,7 @@ create_db_database_mysql() {
         echo "** Database '${DB_SERVER_DBNAME}' does not exist. Creating..."
         mysql_query "CREATE DATABASE ${DB_SERVER_DBNAME} CHARACTER SET utf8 COLLATE utf8_bin" 1>/dev/null
         # better solution?
-        mysql_query "GRANT ALL PRIVILEGES ON $DB_SERVER_DBNAME. * TO '${DB_SERVER_ZBX_USER}'@'%'" 1>/dev/null
+        mysql_query "GRANT ALL PRIVILEGES ON $DB_SERVER_DBNAME.* TO '${ZBX_USER}'@'%' IDENTIFIED BY '${ZBX_PASSWORD}';" 1>/dev/null
     else
         echo "** Database '${DB_SERVER_DBNAME}' already exists. Please be careful with database COLLATE!"
     fi

@@ -503,8 +503,8 @@ prepare_zbx_web_config() {
         -e "s/{DB_SERVER_HOST}/${DB_SERVER_HOST}/g" \
         -e "s/{DB_SERVER_PORT}/${DB_SERVER_PORT}/g" \
         -e "s/{DB_SERVER_DBNAME}/${DB_SERVER_DBNAME}/g" \
-        -e "s/{DB_SERVER_USER}/${DB_SERVER_ZBX_USER}/g" \
-        -e "s/{DB_SERVER_PASS}/${DB_SERVER_ZBX_PASS}/g" \
+        -e "s/{DB_SERVER_USER}/${ZBX_USER}/g" \
+        -e "s/{DB_SERVER_PASS}/${ZBX_PASSWORD}/g" \
         -e "s/{ZBX_SERVER_HOST}/${ZBX_SERVER_HOST}/g" \
         -e "s/{ZBX_SERVER_PORT}/${ZBX_SERVER_PORT}/g" \
         -e "s/{ZBX_SERVER_NAME}/$server_name/g" \
@@ -668,8 +668,8 @@ sed -i \
     -e "s/{DB_SERVER_HOST}/${DB_SERVER_HOST}/g" \
     -e "s/{DB_SERVER_PORT}/${DB_SERVER_PORT}/g" \
     -e "s/{DB_SERVER_DBNAME}/${DB_SERVER_DBNAME}/g" \
-    -e "s/{DB_SERVER_USER}/${DB_SERVER_ZBX_USER}/g" \
-    -e "s/{DB_SERVER_PASS}/${DB_SERVER_ZBX_PASS}/g" \
+    -e "s/{DB_SERVER_USER}/${ZBX_USER}/g" \
+    -e "s/{DB_SERVER_PASS}/${ZBX_PASSWORD}/g" \
     -e "s/{ZBX_SERVER_HOST}/${ZBX_SERVER_HOST}/g" \
     -e "s/{ZBX_SERVER_PORT}/${ZBX_SERVER_PORT}/g" \
     -e "s/{ZBX_SERVER_NAME}/$server_name/g" \

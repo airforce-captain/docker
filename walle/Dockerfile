@@ -1,8 +1,8 @@
-FROM alpine:3.4
+FROM alpine:latest
 
 MAINTAINER YoungMan "bushengquan@eastspider.com"
 
-LABEL description="walle 包含NMP集成版测试"
+LABEL description="walle-web集成Nginx,MariaDB,PHP版"
 
 ENV PHPIZE_DEPS \
 		autoconf \

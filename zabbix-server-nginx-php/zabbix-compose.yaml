@@ -1,7 +1,7 @@
 version: '2'
 services:
  zabbix-server:
-  image: server-nginx-php
+  image: qq58945591/zabbix-server-nginx-php
   ports:
    - "10051:10051"
    - "80:80"
@@ -22,6 +22,8 @@ services:
   environment:
     - ZBX_USER=zabbix
     - ZBX_PASSWORD=zabbix_sec_pass
+    - MYSQL_USER=root
+    - MYSQL_PASSWORD=root_sec_pass
     - MYSQL_DATABASE=zabbix
     - TZ=Asia/Shanghai
     - ZBX_SERVER_HOST=zabbix-server
@@ -64,6 +66,7 @@ services:
    zbx_net:
      aliases:
       - mysql-server
+      - mariadb
 
 networks:
  zbx_net:

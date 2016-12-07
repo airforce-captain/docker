@@ -1,6 +1,8 @@
 FROM alpine:latest
 MAINTAINER Youngman <58945591@qq.com>
 
+LABEL description="zabbix-server集成webUI版"
+
 ARG APK_FLAGS_COMMON="-q"
 ARG APK_FLAGS_PERSISTANT="${APK_FLAGS_COMMON} --clean-protected --no-cache"
 ARG APK_FLAGS_DEV="${APK_FLAGS_COMMON} --no-cache"

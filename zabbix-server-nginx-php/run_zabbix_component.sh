@@ -327,9 +327,9 @@ update_zbx_config() {
     else
         update_config_var $ZBX_CONFIG "DBHost" "${DB_SERVER_HOST}"
         update_config_var $ZBX_CONFIG "DBName" "${DB_SERVER_DBNAME}"
-        update_config_var $ZBX_CONFIG "DBUser" "${DB_SERVER_ZBX_USER}"
+        update_config_var $ZBX_CONFIG "DBUser" "${ZBX_USER}"
         update_config_var $ZBX_CONFIG "DBPort" "${DB_SERVER_PORT}"
-        update_config_var $ZBX_CONFIG "DBPassword" "${DB_SERVER_ZBX_PASS}"
+        update_config_var $ZBX_CONFIG "DBPassword" "${ZBX_PASSWORD}"
     fi
 
     if [ "$type" == "proxy" ]; then

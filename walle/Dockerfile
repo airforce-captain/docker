@@ -30,8 +30,7 @@ RUN set -xe \
 ENV PHP_INI_DIR /etc/php
 RUN mkdir -p $PHP_INI_DIR/conf.d && \
         mkdir -p /etc/ansible && \
-        touch /etc/ansible/hosts && \
-        wget -q -O /etc/ansible/ansible.cfg https://raw.githubusercontent.com/ansible/ansible/devel/examples/ansible.cfg
+        touch /etc/ansible/hosts 
 
 ENV PHP_EXTRA_CONFIGURE_ARGS --enable-fpm --with-fpm-user=nginx --with-fpm-group=nginx
 
@@ -86,6 +85,7 @@ RUN set -xe \
     	&& docker-php-source extract \
     	&& cd /usr/src/php \
 	&& wget http://pecl.php.net/get/$REDIS_FILENAME -O /usr/src/php/ext/redis.tgz \
+        && wget -q -O /etc/ansible/ansible.cfg https://raw.githubusercontent.com/ansible/ansible/devel/examples/ansible.cfg \
 	&& tar xf /usr/src/php/ext/redis.tgz -C /usr/src/php/ext \
 	&& mv /usr/src/php/ext/redis-${REDIS_VERSION} /usr/src/php/ext/redis \
     	&& ./configure \

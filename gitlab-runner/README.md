@@ -11,3 +11,27 @@ rsync
 wget
 python2.7
 ansible
+
+### 如何使用?
+
+1. 拉取images:
+
+```
+docker pull qq58945591/gitlab-runner
+```
+
+启动容器 for example:
+```
+docker run -d --name gitlab-runner --restart always \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v /srv/gitlab-runner/config:/etc/gitlab-runner \
+  qq58945591/gitlab-runner:latest
+```
+
+2. 注册ci-runner:
+```
+docker exec -it gitlab-runner gitlab-runner register
+```
+
+
+

@@ -42,7 +42,7 @@ RUN set -x \
 	&& [ "$JAVA_HOME" = "$(docker-java-home)" ]
 
 
-ENV LOGSTASH_VERSION 5.0.2
+ENV LOGSTASH_VERSION 5.1.1
 ENV PATH /usr/share/logstash/bin:$PATH
 ENV LS_SETTINGS_DIR /etc/logstash
 

@@ -16,7 +16,7 @@ RUN set -x \
     && gosu nobody true 
 
 ENV KIBANA_MAJOR 5.0
-ENV KIBANA_VERSION 5.0.2
+ENV KIBANA_VERSION 5.1.1
 
 RUN set -x \
 	&& wget -O /usr/share/kibana-${KIBANA_VERSION}.tar.gz https://artifacts.elastic.co/downloads/kibana/kibana-${KIBANA_VERSION}-linux-x86_64.tar.gz \

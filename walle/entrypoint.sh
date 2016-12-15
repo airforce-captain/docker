@@ -35,6 +35,12 @@ if [ $SERVER_NAME != "walle.company.com" ];then
 	sed -ri "s/walle.company.com/$SERVER_NAME/" /etc/nginx/nginx.conf
 fi
 
+
+#disable walle ldap login feature.
+if [ -e /opt/walle-web/config/params.php ];then
+	sed -i "s/'user_driver'=>'ldap'/'user_driver'=>''/" /opt/walle-web/config/params.php
+fi
+
 #start nginx
 /usr/sbin/nginx
 

@@ -112,6 +112,7 @@ RUN set -xe \
     		--with-curl \
     		--with-libedit \
     		--with-openssl \
+    		--with-mysql \
     		--with-zlib \
 		--with-mcrypt \
 		--with-gettext \

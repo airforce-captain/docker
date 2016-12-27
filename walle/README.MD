@@ -20,15 +20,18 @@ bcmath intl mbstring mcrypt mysqli opcache pdo_mysql
 1. 运行命令example.
 
 ```
-docker run -d --name walle-web -v /data/mysql:/opt/mysql qq5894591/walle-web
+docker run -d --name walle-web -v /data/mysql:/opt/mysql -p 80:80 qq5894591/walle-web
 
 ```
 (注意:－v 是挂载一个本地目录到容器内做mysql的永久数据保存，否则在容器被销毁的时候，数据将丢失.冒号前面的路径是本地主机的目录,后面是容器的目录。修改本地主机的即可.另外可加参数--restart always 让容器在本地主机重启后会自动启动.)
 
 2. 当walle-web 有更新的时候,重新pull镜像,运行就可以了,数据都是保存在本地指定的数据库目录.
 
-3. 可以使用变量-e SERVER_NAME=www.example.com 设定虚拟主机名，未设置则默认使用walle.company.com.
+3. 可以使用变量-e SERVER_NAME=www.example.com 设定虚拟主机名，未设置则默认使用walle.company.com. 如:
+```
+docker run -d --name walle-web -v /data/mysql:/opt/mysql -p 80:80 -e SERVER_NAME=www.example.com qq5894591/walle-web
 
+```
 4. walle默认自动开启ldap功能,导致了访问失败,本镜像禁用了ldap功能.如果需要使用ldap功能,请自行修改配置文件:
 
 在walle目录下找到配置文件config/params.php

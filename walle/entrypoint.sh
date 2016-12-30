@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 set -e
 
-#start db
+#inital db
 if [ ! -d "$DATADIR/mysql" ]; then
 	mkdir -p $DATADIR
 	chown -R mysql:mysql $DATADIR
@@ -21,6 +21,14 @@ else
 		sleep 5
 	fi
 fi
+
+#set mysql root pass,if no change will be use default value.
+
+WALLE_DB_PASS=${WALLE_DB_PASS:-"walle"}
+
+/usr/bin/mysql -e 'use mysql;update user set password=password("$WALLE_DB_PASS") where user="root";flush privileges'
+
+/usr/bin/mysql -uroot -p${WALLE_DB_PASS} -e 'grant all on *.* to "root"@"%" identified by "$WALLE_DB_PASS";flush privileges;'
 
 #if no index
 if [ ! -e /var/www/html/index.php ];then

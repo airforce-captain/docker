@@ -34,7 +34,24 @@ docker run -d --name walle-web -v /data/mysql:/opt/mysql -p 80:80 -e WALLE_DB_PA
 docker run -d --name walle-web -v /data/mysql:/opt/mysql -p 80:80 -e SERVER_NAME="www.example.com" qq5894591/walle-web
 
 ```
-4. walle默认自动开启ldap功能,导致了访问失败,本镜像禁用了ldap功能.如果需要使用ldap功能,请自行修改配置文件:
+
+4. 本镜像支持设定walle 需要的一些可选变量设定,使用docker run时增加-e `var="value"`参数即可:
+```
+#设定walle使用的域名.
+SERVER_NAME
+
+#设定mysql root密码,也是walle数据库密码.
+WALLE_DB_PASS
+
+#设定walle的smtp功能.
+WALLE_MAIL_HOST
+WALLE_MAIL_USER
+WALLE_MAIL_PASS
+WALLE_MAIL_PORT
+WALLE_MAIL_ENCRYPTION
+```
+
+5. walle默认自动开启ldap功能,导致了访问失败,本镜像禁用了ldap功能.如果需要使用ldap功能,请自行修改配置文件:
 
 在walle目录下找到配置文件config/params.php
 

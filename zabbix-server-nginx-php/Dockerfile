@@ -40,7 +40,7 @@ RUN addgroup zabbix && \
             mariadb-client \
             fping \
 	    ansible \
-            py-pip \
+            py2-pip \
             libxml2 \
             unixodbc \
             net-snmp-agent-libs \

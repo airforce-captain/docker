@@ -1,4 +1,4 @@
-FROM alpine:latest
+FROM alpine:3.4
 MAINTAINER Youngman <58945591@qq.com>
 
 LABEL description="zabbix-server集成webUI版"
@@ -32,6 +32,8 @@ RUN addgroup zabbix && \
     mkdir -p /var/lib/zabbix/snmptraps && \
     chown --quiet -R zabbix:root /var/lib/zabbix && \
     mkdir -p /usr/share/doc/zabbix-server-${DB_TYPE} && \
+    echo 'http://mirrors.ustc.edu.cn/alpine/v3.4/main' > /etc/apk/repositories \
+    && echo 'http://mirrors.ustc.edu.cn/alpine/v3.4/community' >> /etc/apk/repositories && \
     apk update && \
     apk add ${APK_FLAGS_PERSISTANT} \
             supervisor \
@@ -40,7 +42,7 @@ RUN addgroup zabbix && \
             mariadb-client \
             fping \
 	    ansible \
-            py2-pip \
+            py-pip \
             libxml2 \
             unixodbc \
             net-snmp-agent-libs \
@@ -87,7 +89,7 @@ RUN apk add ${APK_FLAGS_DEV} --virtual build-dependencies \
             libxml2-dev \
             unixodbc-dev \
             net-snmp-dev \
-            openssl-dev \
+            libssh2-dev \
             openipmi-dev \
             openldap-dev \
             curl-dev \

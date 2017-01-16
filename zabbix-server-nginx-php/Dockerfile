@@ -90,6 +90,7 @@ RUN apk add ${APK_FLAGS_DEV} --virtual build-dependencies \
             unixodbc-dev \
             net-snmp-dev \
             libssh2-dev \
+            libressl-dev \
             openipmi-dev \
             openldap-dev \
             curl-dev \

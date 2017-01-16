@@ -76,4 +76,4 @@ COPY docker-entrypoint.sh /
 EXPOSE 5124/tcp	5125/tcp
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
-CMD ["-e", "logstash"]
+CMD ["logstash"]

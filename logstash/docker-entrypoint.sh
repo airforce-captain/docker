@@ -9,7 +9,7 @@ fi
 
 # Run as user "logstash" if the command is "logstash"
 if [ "$1" = 'logstash' ]; then
-	set -- gosu logstash sh -c "$@"
+	set -- gosu logstash "$@"
 fi
 
 exec "$@"

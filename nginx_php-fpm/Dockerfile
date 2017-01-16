@@ -193,7 +193,8 @@ RUN set -xe \
     		curl-dev \
     		libedit-dev \
     		libxml2-dev \
-		openssl-dev \
+		libssh2-dev \
+		libressl-dev \
     		sqlite-dev \
             	gettext \
             	libmcrypt-dev \

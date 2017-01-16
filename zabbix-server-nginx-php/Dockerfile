@@ -32,8 +32,6 @@ RUN addgroup zabbix && \
     mkdir -p /var/lib/zabbix/snmptraps && \
     chown --quiet -R zabbix:root /var/lib/zabbix && \
     mkdir -p /usr/share/doc/zabbix-server-${DB_TYPE} && \
-    echo 'http://mirrors.ustc.edu.cn/alpine/v3.4/main' > /etc/apk/repositories \
-    && echo 'http://mirrors.ustc.edu.cn/alpine/v3.4/community' >> /etc/apk/repositories && \
     apk update && \
     apk add ${APK_FLAGS_PERSISTANT} \
             supervisor \

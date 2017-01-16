@@ -19,8 +19,8 @@ ARG APK_FLAGS_COMMON="-q"
 ARG APK_FLAGS_PERSISTANT="${APK_FLAGS_COMMON} --clean-protected --no-cache"
 ARG APK_FLAGS_DEV="${APK_FLAGS_COMMON} --no-cache"
 ENV TERM=xterm
-ENV ELASTICSEARCH_VERSION="5.1.1"
-ENV JAVA_ALPINE_VERSION 8.111.14-r0
+ENV ELASTICSEARCH_VERSION="5.1.2"
+ENV JAVA_ALPINE_VERSION 8.111.14-r1
 
 RUN cd /usr/share/ \
     && wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${ELASTICSEARCH_VERSION}.tar.gz \
@@ -46,8 +46,8 @@ RUN cd /usr/share/ \
                   && apk del .gosu-deps \
 		  && rm -f /usr/share/elasticsearch-${ELASTICSEARCH_VERSION}.tar.gz
 
-ENV PATH=$PATH:/usr/share/elasticsearch/bin/
-ENV JAVA_HOME=/usr/lib/jvm/java-1.8-openjdk/
+ENV PATH=$PATH:/usr/share/elasticsearch/bin
+ENV JAVA_HOME=/usr/lib/jvm/java-1.8-openjdk
 ENV JRE_HOME=$JAVA_HOME/jre
 ENV CLASSPATH=.:$JAVA_HOME/jre/lib/rt.jar:$JRE_HOME/lib/
 ENV PATH=$PATH:$JAVA_HOME/bin/
@@ -64,4 +64,4 @@ EXPOSE 9200 9300
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
 
-CMD ["elasticsearch"]
+CMD ["/usr/share/elasticsearch/bin/elasticsearch"]

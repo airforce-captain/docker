@@ -32,7 +32,7 @@ ENV JAVA_HOME /usr/lib/jvm/java-1.8-openjdk/jre
 ENV PATH $PATH:/usr/lib/jvm/java-1.8-openjdk/jre/bin:/usr/lib/jvm/java-1.8-openjdk/bin
 
 ENV JAVA_VERSION 8u92
-ENV JAVA_ALPINE_VERSION 8.111.14-r1
+ENV JAVA_ALPINE_VERSION 8.121.13-r0
 
 RUN set -x \
 	&& apk add --no-cache \
@@ -42,7 +42,7 @@ RUN set -x \
 	&& [ "$JAVA_HOME" = "$(docker-java-home)" ]
 
 
-ENV LOGSTASH_VERSION 5.1.2
+ENV LOGSTASH_VERSION 5.2.2
 ENV PATH /usr/share/logstash/bin:$PATH
 ENV LS_SETTINGS_DIR /etc/logstash
 

@@ -19,8 +19,8 @@ ARG APK_FLAGS_COMMON="-q"
 ARG APK_FLAGS_PERSISTANT="${APK_FLAGS_COMMON} --clean-protected --no-cache"
 ARG APK_FLAGS_DEV="${APK_FLAGS_COMMON} --no-cache"
 ENV TERM=xterm
-ENV ELASTICSEARCH_VERSION="5.1.2"
-ENV JAVA_ALPINE_VERSION 8.111.14-r1
+ENV ELASTICSEARCH_VERSION="5.2.2"
+ENV JAVA_ALPINE_VERSION 8.121.13-r0
 
 RUN cd /usr/share/ \
     && wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${ELASTICSEARCH_VERSION}.tar.gz \

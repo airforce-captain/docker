@@ -6,19 +6,24 @@ LABEL description="使用轻量级alpine linux重新打包image."
 
 ENV GOSU_VERSION 1.10
 RUN set -x \
+    && sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories \
     && apk add --no-cache --virtual .gosu-deps \
         dpkg \
         gnupg \
-        openssl \
-    && dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')" \
-    && wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch" \
-    && chmod +x /usr/local/bin/gosu \
-    && gosu nobody true 
+        openssl 
+#    && dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')" \
+#    && 
+#    && chmod +x /usr/local/bin/gosu \
+#    && gosu nobody true 
+
+COPY gosu /usr/local/bin/gosu
 
 ENV KIBANA_MAJOR 5.0
-ENV KIBANA_VERSION 5.2.2
+ENV KIBANA_VERSION 5.3.0
 
 RUN set -x \
+	&& chmod +x /usr/local/bin/gosu \
+	&& gosu nobody true \
 	&& wget -O /usr/share/kibana-${KIBANA_VERSION}.tar.gz https://artifacts.elastic.co/downloads/kibana/kibana-${KIBANA_VERSION}-linux-x86_64.tar.gz \
 	&& cd /usr/share \
 	&& tar xf kibana-${KIBANA_VERSION}.tar.gz \

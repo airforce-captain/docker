@@ -4,13 +4,15 @@ MAINTAINER Youngman <58945591@qq.com>
 LABEL description="elasticsearch 使用轻量级alpine linux重新打包image,"
 
 ENV GOSU_VERSION 1.10
+
+COPY gosu /usr/local/bin/gosu
+
 RUN set -x \
+    && sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories \
     && apk add --no-cache --virtual .gosu-deps \
         dpkg \
         gnupg \
         openssl \
-    && dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')" \
-    && wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch" \
     && chmod +x /usr/local/bin/gosu \
     && gosu nobody true 
 
@@ -19,7 +21,7 @@ ARG APK_FLAGS_COMMON="-q"
 ARG APK_FLAGS_PERSISTANT="${APK_FLAGS_COMMON} --clean-protected --no-cache"
 ARG APK_FLAGS_DEV="${APK_FLAGS_COMMON} --no-cache"
 ENV TERM=xterm
-ENV ELASTICSEARCH_VERSION="5.2.2"
+ENV ELASTICSEARCH_VERSION="5.3.0"
 ENV JAVA_ALPINE_VERSION 8.121.13-r0
 
 RUN cd /usr/share/ \

@@ -4,16 +4,16 @@ MAINTAINER YougnMan <bushengquan@eastspider.com>
 
 LABEL description="使用轻量级alpine linux重新打包image,自定义logstash配置的docker image, 增加了配置nginx与postfix的自定义日志格式匹配."
 
-ENV GOSU_VERSION 1.10
+COPY gosu /usr/local/bin/gosu
+
 RUN set -x \
+    && sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories \
     && apk add --no-cache --virtual .gosu-deps \
         dpkg \
         gnupg \
         openssl \
-    && dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')" \
-    && wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch" \
     && chmod +x /usr/local/bin/gosu \
-    && gosu nobody true 
+    && gosu nobody true
 
 #install jdk,bash,libzmq
 # Default to UTF-8 file.encoding
@@ -42,7 +42,7 @@ RUN set -x \
 	&& [ "$JAVA_HOME" = "$(docker-java-home)" ]
 
 
-ENV LOGSTASH_VERSION 5.2.2
+ENV LOGSTASH_VERSION 5.3.0
 ENV PATH /usr/share/logstash/bin:$PATH
 ENV LS_SETTINGS_DIR /etc/logstash
 

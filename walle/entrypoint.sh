@@ -27,9 +27,9 @@ fi
 
 WALLE_DB_PASS=${WALLE_DB_PASS:-"walle"}
 
-/usr/bin/mysql -e "update mysql.user set password=password('${WALLE_DB_PASS}') where user='root';flush privileges"
+/usr/bin/mysql -uroot -e "grant all on *.* to 'root'@'%' identified by '$WALLE_DB_PASS';flush privileges;"
 
-/usr/bin/mysql -uroot -p${WALLE_DB_PASS} -e "grant all on *.* to 'root'@'%' identified by '$WALLE_DB_PASS';flush privileges;"
+/usr/bin/mysqladmin -u root password "${WALLE_DB_PASS}"
 
 #change walle connect to DB passwd.
 sed -ri "/WALLE_DB_PASS/ s/(.*:)? (.*)$/\1 '$WALLE_DB_PASS',/" /opt/walle-web/config/local.php

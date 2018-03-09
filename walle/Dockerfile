@@ -54,16 +54,6 @@ RUN set -xe \
 	&& mkdir -p /usr/src \
 	&& cd /usr/src \
 	&& curl -fSL "https://secure.php.net/get/$PHP_FILENAME/from/this/mirror" -o php.tar.xz \
-	&& echo "$PHP_SHA256 *php.tar.xz" | sha256sum -c - \
-	&& curl -fSL "https://secure.php.net/get/$PHP_FILENAME.asc/from/this/mirror" -o php.tar.xz.asc \
-	&& export GNUPGHOME="$(mktemp -d)" \
-	&& for key in $GPG_KEYS; do \
-		gpg --keyserver ha.pool.sks-keyservers.net --recv-keys "$key"; \
-	done \
-	&& gpg --batch --verify php.tar.xz.asc php.tar.xz \
-	&& rm -r "$GNUPGHOME" 
-
-RUN set -xe \
     	&& apk add --no-cache --virtual .build-deps \
     		$PHPIZE_DEPS \
     		curl-dev \
